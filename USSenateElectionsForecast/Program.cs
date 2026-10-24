@@ -30,7 +30,8 @@ internal static class Program
             using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
             http.DefaultRequestHeaders.UserAgent.ParseAdd("USSenateElectionsForecast/1.0");
             var presentation = new ConsolePresentation(Console.Out, enableColor: !Console.IsOutputRedirected);
-            var app = new ConsoleApp(Console.In, Console.Out, store, new PolymarketClient(http), new SimulationEngine(), presentation);
+            var app = new ConsoleApp(Console.In, Console.Out, store, new PolymarketClient(http),
+                new SimulationEngine(), presentation, new ProbabilityCalculationEngine());
             await app.RunAsync(cancellation.Token);
             return 0;
         }

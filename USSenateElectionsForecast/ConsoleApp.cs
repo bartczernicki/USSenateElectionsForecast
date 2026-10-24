@@ -9,7 +9,8 @@ public sealed class ConsoleApp(
     ForecastStore store,
     PolymarketClient client,
     SimulationEngine engine,
-    ConsolePresentation presentation)
+    ConsolePresentation presentation,
+    ProbabilityCalculationEngine probabilityEngine)
 {
     private AppSettings _settings = new();
     private PredictionSnapshot? _snapshot;
@@ -28,32 +29,64 @@ public sealed class ConsoleApp(
         {
             presentation.Context(_settings, _snapshot);
             presentation.Menu(null,
-                ["Independent Monte Carlo Simulation", "Correlated Monte Carlo Simulation", "Configure"], "Exit");
-            int? selection = ReadSelection(3);
+                ["Independent Monte Carlo Simulation", "Correlated Monte Carlo Simulation", "Conditional Monte Carlo", "Direct Probability Calculation", "Configure"], "Exit");
+            int? selection = ReadSelection(5);
             if (selection is null or 0) return;
-            if (selection == 3)
+            if (selection == 5)
             {
                 if (!await ConfigureAsync(cancellationToken)) return;
                 continue;
             }
             if (_snapshot is null)
             {
-                presentation.Warning("Simulation is unavailable until predictions are loaded. Select Configure > Update Predictions from Polymarket.");
+                presentation.Warning("Forecast calculation is unavailable until predictions are loaded. Select Configure > Update Predictions from Polymarket.");
             }
             else
             {
-                output.WriteLine("Running simulation...");
-                var mode = selection == 1 ? SimulationMode.Independent : SimulationMode.Correlated;
                 try
                 {
-                    var result = await Task.Run(() => engine.Run(_snapshot, mode, _settings.TrialCount,
-                        _settings.Rho, cancellationToken: cancellationToken), cancellationToken);
-                    presentation.Results(result);
+                    if (selection is 1 or 2)
+                    {
+                        output.WriteLine("Running simulation...");
+                        var mode = selection == 1 ? SimulationMode.Independent : SimulationMode.Correlated;
+                        var result = await Task.Run(() => engine.Run(_snapshot, mode, _settings.TrialCount,
+                            _settings.Rho, cancellationToken: cancellationToken), cancellationToken);
+                        presentation.Results(result);
+                    }
+                    else if (selection == 3)
+                    {
+                        output.WriteLine("Running conditional Monte Carlo...");
+                        var result = await Task.Run(() => probabilityEngine.RunConditional(_snapshot,
+                            _settings.TrialCount, _settings.Rho, cancellationToken: cancellationToken), cancellationToken);
+                        presentation.Results(result);
+                    }
+                    else
+                    {
+                        output.WriteLine("Calculating independent direct probabilities...");
+                        var independent = await Task.Run(() => probabilityEngine.CalculateIndependent(_snapshot,
+                            cancellationToken), cancellationToken);
+                        presentation.Results(independent);
+                        output.WriteLine();
+                        output.WriteLine("Calculating correlated direct probabilities...");
+                        var correlated = await Task.Run(() => probabilityEngine.CalculateCorrelated(_snapshot,
+                            _settings.Rho, cancellationToken), cancellationToken);
+                        presentation.Results(correlated);
+                    }
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { return; }
+                catch (NumericalConvergenceException error)
+                {
+                    presentation.Error($"Correlated direct calculation did not converge: {error.Message}");
+                    presentation.Warning("The independent results above remain available. Try Correlated Monte Carlo or Conditional Monte Carlo for this rho.");
+                }
+                catch (ArithmeticException error)
+                {
+                    presentation.Error($"Forecast calculation failed numerically: {error.Message}");
+                    presentation.Warning("Try another calculation method. Your predictions and settings are unchanged.");
+                }
                 catch (Exception error) when (error is InvalidDataException or ArgumentException)
                 {
-                    presentation.Error($"Simulation could not run: {error.Message} Update Predictions from Polymarket and try again.");
+                    presentation.Error($"Forecast calculation could not run: {error.Message} Update Predictions from Polymarket and try again.");
                 }
             }
             if (!Pause()) return;
@@ -66,8 +99,8 @@ public sealed class ConsoleApp(
         {
             presentation.Context(_settings, _snapshot);
             presentation.Menu("Configure",
-                ["Update Predictions from Polymarket", "Configure Rho (Correlation)", "Configure Simulation Count"], "Back");
-            int? selection = ReadSelection(3);
+                ["Update Predictions from Polymarket", "Configure Rho (Correlation)", "Configure Simulation Count", "List Current US Senate Polymarket Probabilities"], "Back");
+            int? selection = ReadSelection(4);
             if (selection is null) return false;
             if (selection == 0) return true;
             if (selection == 1)
@@ -88,6 +121,12 @@ public sealed class ConsoleApp(
                 }
                 if (!Pause()) return false;
             }
+            else if (selection == 4)
+            {
+                if (_snapshot is not null) presentation.Predictions(_snapshot);
+                else presentation.Warning("Predictions unavailable. Use Configure > Update Predictions from Polymarket to load them.");
+                if (!Pause()) return false;
+            }
             else if (!ConfigureValue(selection == 2)) return false;
         }
         return false;
@@ -97,9 +136,13 @@ public sealed class ConsoleApp(
     {
         while (true)
         {
+            output.WriteLine(rho
+                ? "Rho range: 0.00 to 0.99. Blank keeps the current value."
+                : "Simulation count range: 1,000 to 10,000,000. Blank keeps the current value.");
+            if (!rho) output.WriteLine("This count sets election trials or conditional national-factor samples.");
             output.Write(rho
-                ? $"Enter rho from 0.00 to 0.99 (current {_settings.Rho.ToString("0.00############", CultureInfo.InvariantCulture)}; blank keeps current): "
-                : $"Enter simulation count from 1,000 to 10,000,000 (current {_settings.TrialCount.ToString("N0", CultureInfo.InvariantCulture)}; blank keeps current): ");
+                ? $"Enter rho (current {_settings.Rho.ToString("0.00############", CultureInfo.InvariantCulture)}): "
+                : $"Enter simulation count (current {_settings.TrialCount.ToString("N0", CultureInfo.InvariantCulture)}): ");
             string? text = input.ReadLine()?.Trim();
             if (text is null) return false;
             if (text.Length == 0) return true;

@@ -68,7 +68,7 @@ public sealed class ConsolePresentation
         _output.WriteLine($"Simulation count: {settings.TrialCount.ToString("N0", CultureInfo.InvariantCulture)} | Rho: {settings.Rho.ToString("0.00############", CultureInfo.InvariantCulture)}");
         if (snapshot is null)
         {
-            Warning("Predictions unavailable. Use Configure > Update Predictions from Polymarket before simulating.");
+            Warning("Predictions unavailable. Use Configure > Update Predictions from Polymarket before forecasting.");
             return;
         }
         _output.WriteLine($"Election: {snapshot.ElectionYear} | Races: {snapshot.Races.Count} | Predictions retrieved: {Timestamp(snapshot.RetrievedAt)}");
@@ -79,19 +79,55 @@ public sealed class ConsolePresentation
             Warning("These saved predictions are over 24 hours old. Update Predictions from Polymarket to refresh them.");
     }
 
-    public void Results(SimulationResult result)
+    public void Results(SimulationResult result) => Results(ProbabilityResult.FromSimulation(result));
+
+    public void Results(ProbabilityResult result)
     {
         _output.WriteLine();
-        Line($"{result.Mode} Monte Carlo Simulation", Cyan);
-        _output.WriteLine($"Trials: {result.TrialCount.ToString("N0", CultureInfo.InvariantCulture)} | Predictions retrieved: {Timestamp(result.SnapshotAt)}");
-        if (result.Mode == SimulationMode.Correlated)
+        string title = result.Method switch
         {
-            _output.WriteLine($"Rho: {result.Rho.ToString("0.00############", CultureInfo.InvariantCulture)} (shared latent Gaussian correlation)");
-            Prose("A shared national factor moves races together while preserving each race's win probabilities.");
+            CalculationMethod.IndependentMonteCarlo => "Independent Monte Carlo Simulation",
+            CalculationMethod.CorrelatedMonteCarlo => "Correlated Monte Carlo Simulation",
+            CalculationMethod.ConditionalMonteCarlo => "Conditional Monte Carlo",
+            CalculationMethod.DirectIndependent => "Direct Probability Calculation (Independent)",
+            CalculationMethod.DirectCorrelated => "Direct Probability Calculation (Correlated)",
+            _ => throw new ArgumentOutOfRangeException(nameof(result), "Unknown calculation method.")
+        };
+        Line(title, Cyan);
+        string source = $"Predictions retrieved: {Timestamp(result.SnapshotAt)}";
+        if (result.Method is CalculationMethod.IndependentMonteCarlo or CalculationMethod.CorrelatedMonteCarlo)
+            Prose($"Trials: {result.SampleCount?.ToString("N0", CultureInfo.InvariantCulture)} | {source}");
+        else if (result.Method == CalculationMethod.ConditionalMonteCarlo)
+            Prose($"National-factor samples: {result.SampleCount?.ToString("N0", CultureInfo.InvariantCulture)} | {source}");
+        else Prose(source);
+
+        if (result.Method is CalculationMethod.CorrelatedMonteCarlo or CalculationMethod.ConditionalMonteCarlo or CalculationMethod.DirectCorrelated)
+        {
+            Prose($"Rho: {result.Rho.ToString("0.00############", CultureInfo.InvariantCulture)} (shared latent Gaussian correlation)");
         }
-        else
+        switch (result.Method)
         {
-            Prose("Each race is sampled independently using its individual win probabilities.");
+            case CalculationMethod.IndependentMonteCarlo:
+                Prose("Each race is sampled independently using its individual win probabilities.");
+                break;
+            case CalculationMethod.CorrelatedMonteCarlo:
+                Prose("A shared national factor moves races together while preserving each race's win probabilities.");
+                break;
+            case CalculationMethod.ConditionalMonteCarlo:
+                Prose(result.Rho == 0
+                    ? "Rho is zero: exact independent aggregation; no national-factor sampling."
+                    : "Each national-factor sample contributes a complete conditional seat distribution.");
+                break;
+            case CalculationMethod.DirectIndependent:
+                Prose("Exact independent aggregation, subject to floating-point arithmetic.");
+                break;
+            case CalculationMethod.DirectCorrelated:
+                if (result.Rho == 0)
+                    Prose("Rho is zero: exact independent aggregation; numerical integration is not needed.");
+                else if (result.Integration is { } diagnostics)
+                    Prose($"Numerical integration converged at order {diagnostics.Order.ToString("N0", CultureInfo.InvariantCulture)}; tolerance {diagnostics.Tolerance.ToString("G", CultureInfo.InvariantCulture)}.");
+                else Prose("Correlated probabilities calculated by numerical integration.");
+                break;
         }
         _output.WriteLine();
         Prose("Final Senate seats: 100 total. Independents count with their known caucus.");
@@ -100,39 +136,64 @@ public sealed class ConsolePresentation
         Summary("Unknown / unaffiliated", result.UnknownSeats);
         _output.WriteLine();
         Line("Senate Control Probability:", Cyan);
-        Bar("Democratic caucus", (double)result.DemocraticControlTrials / result.TrialCount, Cyan);
-        Bar("Republican caucus", (double)result.RepublicanControlTrials / result.TrialCount, Cyan);
-        Bar("Uncertain control", (double)result.UncertainControlTrials / result.TrialCount, Cyan);
+        Bar("Democratic caucus", result.DemocraticControlProbability, Cyan);
+        Bar("Republican caucus", result.RepublicanControlProbability, Cyan);
+        Bar("Uncertain control", result.UncertainControlProbability, Cyan);
         Prose("The Vice President's tie-breaking vote favors the Republican caucus at 50-50.");
         Prose("Control is uncertain when unaffiliated winners could determine the majority.");
-        Distribution("Democratic Caucus Seat Distribution:", result.DemocraticSeats, result.TrialCount, Cyan);
-        Distribution("Republican Caucus Seat Distribution:", result.RepublicanSeats, result.TrialCount, Cyan);
+        Distribution("Democratic Caucus Seat Distribution:", result.DemocraticSeats, Cyan);
+        Distribution("Republican Caucus Seat Distribution:", result.RepublicanSeats, Cyan);
         DemocraticSeatProbabilities(result);
+    }
+
+    public void Predictions(PredictionSnapshot snapshot)
+    {
+        _output.WriteLine();
+        Line("Current Race Probabilities (closest first):", Cyan);
+        _output.WriteLine($"Predictions retrieved: {Timestamp(snapshot.RetrievedAt)} | Races: {snapshot.Races.Count}");
+        Prose("Probabilities are normalized and match the current simulation inputs.");
+        Prose("Closeness = probability gap between the two leading outcomes.");
+
+        var ranked = snapshot.Races.Select(race =>
+        {
+            var outcomes = race.Outcomes.OrderByDescending(outcome => outcome.Probability)
+                .ThenBy(outcome => outcome.Label, StringComparer.Ordinal).ToArray();
+            return new { Race = race, Outcomes = outcomes, Gap = outcomes[0].Probability - outcomes[1].Probability };
+        }).OrderBy(item => item.Gap).ThenBy(item => item.Race.State, StringComparer.Ordinal);
+
+        int rank = 0;
+        foreach (var item in ranked)
+        {
+            _output.WriteLine();
+            string special = item.Race.IsSpecial ? " (special)" : "";
+            Line($"{++rank,2}) {item.Race.State}{special} | Gap: {(item.Gap * 100).ToString("0.00", CultureInfo.InvariantCulture)} percentage points", Gold);
+            foreach (var outcome in item.Outcomes)
+                Prose($"    {outcome.Label}: {outcome.Probability.ToString("P2", CultureInfo.InvariantCulture)}");
+        }
     }
 
     public void Warning(string message) => Line(message, Gold);
     public void Error(string message) => Line($"Error: {message}", Red);
     public void Success(string message) => Line(message, Green);
 
-    private void Summary(string label, SeatDistribution distribution) =>
+    private void Summary(string label, ProbabilitySeatDistribution distribution) =>
         _output.WriteLine($"  {label,-23} Mean: {distribution.Mean.ToString("0.00", CultureInfo.InvariantCulture),6} | 90% interval: {distribution.Percentile(0.05)}–{distribution.Percentile(0.95)} seats");
 
-    private void Distribution(string heading, SeatDistribution distribution, int trialCount, string color)
+    private void Distribution(string heading, ProbabilitySeatDistribution distribution, string color)
     {
         _output.WriteLine();
         Line(heading, Cyan);
-        for (int seats = 0; seats < distribution.Counts.Length; seats++)
-            if (distribution.Counts[seats] > 0) Bar($"{seats} seats", (double)distribution.Counts[seats] / trialCount, color);
+        for (int seats = 0; seats < distribution.Probabilities.Count; seats++)
+            if (distribution.Probabilities[seats] > 0) Bar($"{seats} seats", distribution.Probabilities[seats], color);
     }
 
-    private void DemocraticSeatProbabilities(SimulationResult result)
+    private void DemocraticSeatProbabilities(ProbabilityResult result)
     {
         _output.WriteLine();
         Line("Democratic seat probabilities (at least):", Cyan);
         for (int threshold = 50; threshold <= 60; threshold++)
         {
-            int qualifyingTrials = result.DemocraticSeats.Counts.Skip(threshold).Sum();
-            double probability = (double)qualifyingTrials / result.TrialCount;
+            double probability = result.DemocraticSeats.ProbabilityAtLeast(threshold);
             _output.WriteLine($"  Probability of >={threshold} Dem Seats: {probability.ToString("P2", CultureInfo.InvariantCulture)}");
         }
     }

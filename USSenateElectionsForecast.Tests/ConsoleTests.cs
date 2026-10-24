@@ -12,22 +12,26 @@ public sealed class ConsoleTests
     [TestMethod]
     public async Task MenusValidateInputAndNavigateBackWithoutRecursion()
     {
-        using var scenario = new Scenario("bad\n4\n3\n9\n0\n0\n");
+        using var scenario = new Scenario("bad\n6\n5\n9\n0\n0\n");
         await scenario.RunAsync();
         StringAssert.Contains(scenario.Text, "US Senate Elections Forecast");
         StringAssert.Contains(scenario.Text, "1) Independent Monte Carlo Simulation");
         StringAssert.Contains(scenario.Text, "2) Correlated Monte Carlo Simulation");
-        StringAssert.Contains(scenario.Text, "3) Configure");
+        StringAssert.Contains(scenario.Text, "3) Conditional Monte Carlo");
+        StringAssert.Contains(scenario.Text, "4) Direct Probability Calculation");
+        StringAssert.Contains(scenario.Text, "5) Configure");
         StringAssert.Contains(scenario.Text, "0) Exit");
         StringAssert.Contains(scenario.Text, "0) Back");
-        Assert.AreEqual(3, Occurrences(scenario.Text, "Please enter a number from 0 to 3."));
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Please enter a number from 0 to 5."));
+        Assert.AreEqual(1, Occurrences(scenario.Text, "Please enter a number from 0 to 4."));
+        StringAssert.Contains(scenario.Text, "4) List Current US Senate Polymarket Probabilities");
         Assert.DoesNotContain("\u001b", scenario.Text);
     }
 
     [TestMethod]
     public async Task RhoAndCountRejectInvalidValuesAndPersistValidValues()
     {
-        using var scenario = new Scenario("3\n2\nNaN\nInfinity\n-0.01\n1\n0.99\n3\n999\n10000001\n1,2,3,4\n1,000\n0\n0\n");
+        using var scenario = new Scenario("5\n2\nNaN\nInfinity\n-0.01\n1\n0.99\n3\n999\n10000001\n1,2,3,4\n1,000\n0\n0\n");
         await scenario.RunAsync();
         AppSettings settings = scenario.Store.LoadSettings();
         Assert.AreEqual(0.99, settings.Rho);
@@ -39,7 +43,7 @@ public sealed class ConsoleTests
     [TestMethod]
     public async Task BlankValuesRetainSettingsAndZeroIsValidRho()
     {
-        using var scenario = new Scenario("3\n2\n0.123456\n2\n\n2\n0\n3\n\n0\n0\n");
+        using var scenario = new Scenario("5\n2\n0.123456\n2\n\n2\n0\n3\n\n0\n0\n");
         await scenario.RunAsync();
         AppSettings settings = scenario.Store.LoadSettings();
         Assert.AreEqual(0, settings.Rho);
@@ -51,7 +55,7 @@ public sealed class ConsoleTests
     [TestMethod]
     public async Task FailedUpdateRetainsSavedPredictionsAndReturnsToConfigure()
     {
-        using var scenario = new Scenario("3\n1\n\n0\n0\n");
+        using var scenario = new Scenario("5\n1\n\n0\n0\n");
         var before = scenario.Store.LoadSnapshot();
         await scenario.RunAsync();
         var after = scenario.Store.LoadSnapshot();
@@ -65,7 +69,7 @@ public sealed class ConsoleTests
     public async Task SuccessfulUpdatePersistsAllRacesAndUsesNewSnapshotForSimulation()
     {
         using var handler = new SuccessfulRequestHandler();
-        using var scenario = new Scenario("3\n1\n\n0\n1\n\n0\n", handler: handler);
+        using var scenario = new Scenario("5\n1\n\n4\n\n0\n1\n\n0\n", handler: handler);
         scenario.Store.SaveSnapshot(TestSnapshots.Certain() with { RetrievedAt = DateTimeOffset.UtcNow.AddDays(-2) });
         scenario.Store.SaveSettings(new AppSettings(0.12, 1_000));
         DateTimeOffset began = DateTimeOffset.UtcNow;
@@ -79,16 +83,42 @@ public sealed class ConsoleTests
         string timestamp = saved.RetrievedAt.UtcDateTime.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture);
         StringAssert.Contains(scenario.Text, $"Trials: 1,000 | Predictions retrieved: {timestamp}");
         StringAssert.Contains(scenario.Text, "Senate Control Probability:");
+        using var expectedListing = new StringWriter(CultureInfo.InvariantCulture);
+        new ConsolePresentation(expectedListing).Predictions(saved);
+        StringAssert.Contains(scenario.Text, expectedListing.ToString());
+    }
+
+    [TestMethod]
+    public async Task ListingShowsCurrentSnapshotWithoutFetchingOrChangingSavedData()
+    {
+        using var handler = new FailedRequestHandler();
+        using var scenario = new Scenario("5\n4\n\n0\n0\n", handler: handler);
+        scenario.Store.SaveSettings(new AppSettings(0.42, 1_000));
+        string predictionsBefore = File.ReadAllText(scenario.Store.SnapshotPath);
+        string settingsBefore = File.ReadAllText(scenario.Store.SettingsPath);
+        using var expectedListing = new StringWriter(CultureInfo.InvariantCulture);
+        new ConsolePresentation(expectedListing).Predictions(scenario.Store.LoadSnapshot());
+
+        await scenario.RunAsync();
+
+        Assert.AreEqual(0, handler.RequestCount);
+        Assert.AreEqual(predictionsBefore, File.ReadAllText(scenario.Store.SnapshotPath));
+        Assert.AreEqual(settingsBefore, File.ReadAllText(scenario.Store.SettingsPath));
+        StringAssert.Contains(scenario.Text, expectedListing.ToString());
+        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "4) List Current US Senate Polymarket Probabilities"));
+        Assert.DoesNotContain("Running simulation...", scenario.Text);
     }
 
     [TestMethod]
     public async Task MissingSnapshotLeavesMenusUsableAndExplainsDisabledSimulation()
     {
-        using var scenario = new Scenario("1\n\n3\n0\n0\n", noSnapshot: true);
+        using var scenario = new Scenario("1\n\n2\n\n3\n\n4\n\n5\n4\n\n0\n0\n", noSnapshot: true);
         await scenario.RunAsync();
         StringAssert.Contains(scenario.Text, "Predictions unavailable.");
-        StringAssert.Contains(scenario.Text, "Simulation is unavailable until predictions are loaded.");
+        Assert.AreEqual(4, Occurrences(scenario.Text, "Forecast calculation is unavailable until predictions are loaded."));
         StringAssert.Contains(scenario.Text, "1) Update Predictions from Polymarket");
+        StringAssert.Contains(scenario.Text, "load them.");
+        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "4) List Current US Senate Polymarket Probabilities"));
     }
 
     [TestMethod]
@@ -108,6 +138,100 @@ public sealed class ConsoleTests
         Assert.AreEqual(2, Occurrences(scenario.Text, "Probability of >=60 Dem Seats:"));
         StringAssert.Contains(scenario.Text, "90% interval:");
         StringAssert.Contains(scenario.Text, "shared latent Gaussian correlation");
+    }
+
+    [TestMethod]
+    public async Task ConditionalAndDirectMenusRenderWeightedResultsWithAccurateMethodLabels()
+    {
+        using var scenario = new Scenario("3\n\n4\n\n0\n");
+        scenario.Store.SaveSettings(new AppSettings(0.12, 1_000));
+        await scenario.RunAsync();
+        StringAssert.Contains(scenario.Text, "National-factor samples: 1,000");
+        StringAssert.Contains(scenario.Text, "Direct Probability Calculation (Independent)");
+        StringAssert.Contains(scenario.Text, "Exact independent aggregation, subject to floating-point arithmetic.");
+        StringAssert.Contains(scenario.Text, "Direct Probability Calculation (Correlated)");
+        StringAssert.Contains(scenario.Text, "Numerical integration converged at order");
+        StringAssert.Contains(scenario.Text, "tolerance 1E-10");
+        Assert.AreEqual(3, Occurrences(scenario.Text, "Senate Control Probability:"));
+        Assert.AreEqual(3, Occurrences(scenario.Text, "Democratic Caucus Seat Distribution:"));
+        Assert.AreEqual(3, Occurrences(scenario.Text, "Republican Caucus Seat Distribution:"));
+        Assert.AreEqual(3, Occurrences(scenario.Text, "Probability of >=50 Dem Seats:"));
+        Assert.AreEqual(3, Occurrences(scenario.Text, "Probability of >=60 Dem Seats:"));
+        Assert.DoesNotContain("Unknown / Unaffiliated Seat Distribution:", scenario.Text);
+        Assert.DoesNotContain("Trials:", scenario.Text);
+        Assert.IsGreaterThan(scenario.Text.IndexOf("Direct Probability Calculation (Independent)", StringComparison.Ordinal),
+            scenario.Text.IndexOf("Direct Probability Calculation (Correlated)", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public async Task ConditionalRhoZeroReportsExactCalculationWithoutSampling()
+    {
+        using var scenario = new Scenario("3\n\n0\n");
+        scenario.Store.SaveSettings(new AppSettings(0, 1_000));
+        await scenario.RunAsync();
+        StringAssert.Contains(scenario.Text, "National-factor samples: 0");
+        StringAssert.Contains(scenario.Text, "Rho is zero: exact independent aggregation; no national-factor sampling.");
+        Assert.DoesNotContain("Trials:", scenario.Text);
+    }
+
+    [TestMethod]
+    public async Task DirectNonconvergenceRetainsIndependentResultsAndReturnsToMainMenu()
+    {
+        using var scenario = new Scenario("4\n\n0\n", probabilityEngine: new ProbabilityCalculationEngine(32));
+        await scenario.RunAsync();
+        StringAssert.Contains(scenario.Text, "Direct Probability Calculation (Independent)");
+        StringAssert.Contains(scenario.Text, "Correlated direct calculation did not converge:");
+        StringAssert.Contains(scenario.Text, "The independent results above remain available.");
+        Assert.DoesNotContain("Direct Probability Calculation (Correlated)", scenario.Text);
+        Assert.AreEqual(1, Occurrences(scenario.Text, "Senate Control Probability:"));
+        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "5) Configure"));
+        string error = scenario.Text[scenario.Text.IndexOf("Error: Correlated direct", StringComparison.Ordinal)..]
+            .Split("Press Enter", StringSplitOptions.None)[0];
+        Assert.DoesNotContain("Update Predictions", error);
+    }
+
+    [TestMethod]
+    public async Task CancellationExitsConditionalAndDirectCalculationsWithoutPausing()
+    {
+        foreach (string message in new[] { "Running conditional Monte Carlo...", "Calculating correlated direct probabilities..." })
+        {
+            using var cancellation = new CancellationTokenSource();
+            using var writer = new CancellationWriter(message, cancellation);
+            using var scenario = new Scenario(message.StartsWith("Running", StringComparison.Ordinal) ? "3\n" : "4\n", writer: writer);
+            scenario.Store.SaveSettings(new AppSettings(0.12, 1_000));
+            await scenario.RunAsync(cancellation.Token).WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.IsTrue(cancellation.IsCancellationRequested);
+            Assert.DoesNotContain("Press Enter to return", scenario.Text);
+            Assert.DoesNotContain("Error:", scenario.Text);
+            if (message.StartsWith("Calculating", StringComparison.Ordinal))
+                StringAssert.Contains(scenario.Text, "Direct Probability Calculation (Independent)");
+        }
+    }
+
+    [TestMethod]
+    public void WeightedResultsRenderProbabilitiesWithoutTrialCounts()
+    {
+        double[] democratic = new double[101], republican = new double[101], unknown = new double[101];
+        democratic[49] = 0.123456;
+        democratic[51] = 0.876544;
+        republican[49] = 0.876544;
+        republican[51] = 0.123456;
+        unknown[0] = 1;
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        var result = new ProbabilityResult(CalculationMethod.DirectCorrelated, null, 0.12, DateTimeOffset.UtcNow,
+            new ProbabilitySeatDistribution(democratic), new ProbabilitySeatDistribution(republican),
+            new ProbabilitySeatDistribution(unknown), new IntegrationDiagnostics(128, 1e-10, 1e-14, 1e-15, 1e-14));
+
+        new ConsolePresentation(output).Results(result);
+
+        string text = output.ToString();
+        Assert.DoesNotContain("Trials:", text);
+        Assert.DoesNotContain("samples:", text);
+        StringAssert.Contains(text, "Probability of >=50 Dem Seats: 87.65 %");
+        StringAssert.Contains(text, "Numerical integration converged at order 128; tolerance 1E-10.");
+        Assert.DoesNotContain("Unknown / Unaffiliated Seat Distribution:", text);
+        StringAssert.Contains(text, "Unknown / unaffiliated");
+        foreach (string line in text.ReplaceLineEndings("\n").Split('\n')) Assert.IsLessThanOrEqualTo(80, line.Length);
     }
 
     [TestMethod]
@@ -143,10 +267,10 @@ public sealed class ConsoleTests
     [TestMethod]
     public async Task EndOfInputExitsFromEveryPrompt()
     {
-        foreach (string input in new[] { "", "3\n", "3\n2\n", "3\n3\n", "1\n" })
+        foreach (string input in new[] { "", "5\n", "5\n2\n", "5\n3\n", "5\n4\n", "1\n", "3\n", "4\n" })
         {
             using var scenario = new Scenario(input);
-            scenario.Store.SaveSettings(new AppSettings(0.12, 1_000));
+            scenario.Store.SaveSettings(new AppSettings(0, 1_000));
             await scenario.RunAsync().WaitAsync(TimeSpan.FromSeconds(10));
         }
     }
@@ -180,22 +304,27 @@ public sealed class ConsoleTests
     {
         private readonly string _directory = Path.Combine(Path.GetTempPath(), "senate-console-tests-" + Guid.NewGuid().ToString("N"));
         private readonly StringReader _input;
-        private readonly StringWriter _output = new();
+        private readonly StringWriter _output;
         private readonly HttpClient _http;
+        private readonly ProbabilityCalculationEngine _probabilityEngine;
         public ForecastStore Store { get; }
         public string Text => _output.ToString();
 
-        public Scenario(string input, bool noSnapshot = false, HttpMessageHandler? handler = null)
+        public Scenario(string input, bool noSnapshot = false, HttpMessageHandler? handler = null,
+            ProbabilityCalculationEngine? probabilityEngine = null, StringWriter? writer = null)
         {
             _input = new StringReader(input);
             _http = new HttpClient(handler ?? new FailedRequestHandler());
+            _probabilityEngine = probabilityEngine ?? new ProbabilityCalculationEngine();
+            _output = writer ?? new StringWriter(CultureInfo.InvariantCulture);
             Store = new ForecastStore(_directory, noSnapshot ? Path.Combine(_directory, "missing.json")
                 : Path.Combine(AppContext.BaseDirectory, "Data", "bundled-predictions.json"));
             if (!noSnapshot) Store.SaveSnapshot(TestSnapshots.Load());
         }
 
-        public Task RunAsync() => new ConsoleApp(_input, _output, Store, new PolymarketClient(_http),
-            new SimulationEngine(), new ConsolePresentation(_output)).RunAsync();
+        public Task RunAsync(CancellationToken cancellationToken = default) => new ConsoleApp(_input, _output, Store,
+            new PolymarketClient(_http), new SimulationEngine(), new ConsolePresentation(_output),
+            _probabilityEngine).RunAsync(cancellationToken);
 
         public void Dispose()
         {
@@ -206,10 +335,25 @@ public sealed class ConsoleTests
         }
     }
 
+    private sealed class CancellationWriter(string message, CancellationTokenSource cancellation) : StringWriter(CultureInfo.InvariantCulture)
+    {
+        public override void WriteLine(string? value)
+        {
+            base.WriteLine(value);
+            if (value == message) cancellation.Cancel();
+        }
+    }
+
     private sealed class FailedRequestHandler : HttpMessageHandler
     {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
-            Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = new StringContent("Invalid request.") });
+        private int _requestCount;
+        public int RequestCount => _requestCount;
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Interlocked.Increment(ref _requestCount);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = new StringContent("Invalid request.") });
+        }
     }
 
     private sealed class SuccessfulRequestHandler : HttpMessageHandler

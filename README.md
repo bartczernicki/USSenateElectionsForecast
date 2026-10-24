@@ -1,6 +1,6 @@
 # US Senate Elections Forecast
 
-A .NET 10 console application for the 2026 U.S. Senate elections. Run independent or correlated Monte Carlo simulations of all 35 contests, including the Florida and Ohio special elections, and see control probabilities and final seat distributions.
+A .NET 10 console application for the 2026 U.S. Senate elections. Forecast all 35 contests, including the Florida and Ohio special elections, using independent, correlated, or conditional Monte Carlo, or direct probability calculation. Results include control probabilities and final seat distributions.
 
 ## Run
 
@@ -15,17 +15,22 @@ The application works offline immediately using a real Polymarket snapshot captu
 ```text
 1) Independent Monte Carlo Simulation
 2) Correlated Monte Carlo Simulation
-3) Configure
+3) Conditional Monte Carlo
+4) Direct Probability Calculation
+5) Configure
 0) Exit
 
 Configure
 1) Update Predictions from Polymarket
 2) Configure Rho (Correlation)
 3) Configure Simulation Count
+4) List Current US Senate Polymarket Probabilities
 0) Back
 ```
 
-Enter a menu number, use `0` to go back or exit, and press Enter after an action to return. Blank configuration input keeps the current value. Defaults are **rho 0.12** and **100,000 trials**. Rho accepts finite numbers from 0 through 0.99 using a decimal point; trial counts accept integers from 1,000 through 10,000,000. EOF exits cleanly; Ctrl+C cancels a simulation or refresh.
+Enter a menu number, use `0` to go back or exit, and press Enter after an action to return. Blank configuration input keeps the current value. Defaults are **rho 0.12** and a **simulation count of 100,000**. Rho accepts finite numbers from 0 through 0.99 using a decimal point; counts accept integers from 1,000 through 10,000,000. The count means election trials for options 1 and 2 and national-factor samples for option 3. Option 4 calculates both models directly and ignores the simulation count. EOF exits cleanly; Ctrl+C cancels a forecast calculation or refresh.
+
+**Configure > List Current US Senate Polymarket Probabilities** shows all 79 outcome probabilities from the selected snapshot without fetching new data or changing saved settings. Races appear closest first: closeness is the gap in percentage points between the two highest normalized outcome probabilities in each race. Smaller gaps come first, with state names breaking ties; outcomes within a race appear from highest to lowest probability. The list includes the snapshot's retrieval time and identifies special elections. Use **Update Predictions from Polymarket** first to refresh the listed probabilities.
 
 ## Forecast model
 
@@ -33,9 +38,9 @@ Every trial starts with **34 Democratic-caucus seats and 31 Republican seats** n
 
 Democratic and Republican winners are assumed to join their respective caucuses. Independent, Green, or other candidates without a known caucus remain in an **unknown / unaffiliated** bloc. Alaska's candidate contracts use explicit mappings supported by the [official Alaska candidate list](https://www.elections.alaska.gov/candidates/?election=26prim); candidate names do not determine party or caucus automatically. The catalog preserves the contract IDs, slugs, and source links.
 
-The model assumes a Republican vice president, consistent with the Senate's [tie-vote record](https://www.senate.gov/legislative/TieVotes.htm). Republican control requires at least 50 Republican-caucus seats; Democratic control requires at least 51 Democratic-caucus seats. Other outcomes are labeled **uncertain control**, because unaffiliated senators could determine the controlling caucus. Seat ranges are the empirical 5th–95th percentiles of simulated outcomes, rather than confidence intervals for the estimated mean.
+The model assumes a Republican vice president, consistent with the Senate's [tie-vote record](https://www.senate.gov/legislative/TieVotes.htm). Republican control requires at least 50 Republican-caucus seats; Democratic control requires at least 51 Democratic-caucus seats. Other outcomes are labeled **uncertain control**, because unaffiliated senators could determine the controlling caucus. Seat ranges are the 5th–95th percentiles of the final seat distribution, rather than confidence intervals for the estimated mean.
 
-Both simulation results show Democratic and Republican seat histograms, followed by a footer with probabilities of at least 50 through 60 Democratic-caucus seats. For example, `>=50 Dem Seats` counts outcomes with 50 or more seats. Unknown / unaffiliated seats remain included in the summary and control calculations.
+All calculation methods show Democratic and Republican seat probability charts, followed by a footer with probabilities of at least 50 through 60 Democratic-caucus seats. For example, `>=50 Dem Seats` counts outcomes with 50 or more seats. Unknown / unaffiliated seats remain included in the summary and control calculations.
 
 Independent mode samples a separate uniform draw for each race. Correlated mode uses a Gaussian copula:
 
@@ -45,6 +50,37 @@ Z[i] = sqrt(rho) * nationalFactor + sqrt(1 - rho) * raceFactor[i]
 ```
 
 Cumulative normal thresholds select a race's outcome in the fixed order Democratic caucus, unknown caucus, Republican caucus. Higher national scores favor Republicans. This preserves each race's marginal probabilities. **Rho is correlation between the underlying normal scores, not between observed win/loss indicators.** Independent mode ignores the configured rho; correlated mode with rho zero has the same independent behavior. Normal sampling and quantiles use MathNet.Numerics 5.0.0.
+
+### Conditional Monte Carlo
+
+Given a national-factor value, races are independent under the same Gaussian model. Option 3 samples that factor and calculates each race's conditional Democratic, unknown, and Republican probabilities. For each bloc, a Poisson-binomial recurrence aggregates the 35 races into a complete conditional seat distribution:
+
+```text
+v[0] = 1
+For each race with conditional win probability q:
+    newV[k] = (1 - q) * v[k] + q * v[k - 1]
+```
+
+The method averages those full distributions across national-factor samples. It retains election uncertainty within each national environment; a histogram of conditional mean seats would give a different and incorrect distribution. Each sample does more work than an ordinary Monte Carlo trial. At rho zero, option 3 computes the independent distribution directly and reports that no national-factor samples were needed.
+
+### Direct Probability Calculation
+
+Option 4 displays the independent result, followed by the correlated result at the configured rho. Independent aggregation applies the same recurrence once to the current probabilities and is exact apart from floating-point arithmetic. Correlated calculation integrates the full conditional distributions against the standard-normal density over factor values `[-9,9]`; the excluded Gaussian tail mass is approximately `2.26e-19`.
+
+Integration uses the existing MathNet package's [GaussLegendreRule](https://numerics.mathdotnet.com/api/MathNet.Numerics.Integration/GaussLegendreRule.htm), doubling the order from 32 up to 8192. It requires two consecutive refinements with maximum per-bloc probability-distribution L1 change at most `1e-10`, mass error at most `1e-10`, and analytic mean error at most `1e-8` seats. This is a numerical convergence criterion, rather than a certified error bound. The correlated result shows the final integration order and tolerance. At rho zero it uses exact independent aggregation instead.
+
+If integration reaches its limit without convergence, the app explains the numerical failure and keeps the already displayed independent result. It does not display an unconverged correlated forecast. Direct calculations do not create artificial integer trial counts: charts, percentiles, and tail probabilities use the calculated probability masses directly.
+
+Control probabilities follow from the marginal distributions: `P(D >= 51)`, `P(R >= 50)`, and `1 - P(D >= 51) - P(R >= 50)` for uncertain control. The two control events are disjoint under the existing rules, so these calculations do not require a joint seat distribution.
+
+For the bundled snapshot, direct calculation gives:
+
+| Model | Democratic control | Republican control | Uncertain control |
+|---|---:|---:|---:|
+| Independent | 72.51% | 21.09% | 6.40% |
+| Correlated, rho 0.12 | 67.06% | 28.89% | 4.05% |
+
+Both direct models preserve expected Democratic seats of approximately `51.4329914373`. Conditional Monte Carlo estimates converge toward the correlated direct result as the number of factor samples increases.
 
 ## Prediction data and refreshes
 
@@ -72,4 +108,4 @@ dotnet test USSenateElectionsForecast.sln -c Release
 dotnet publish USSenateElectionsForecast/USSenateElectionsForecast.csproj -c Release -o artifacts/publish
 ```
 
-The published output includes `Data/bundled-predictions.json` and can forecast without network access. The MSTest suite uses seeded simulations, captured Gamma fixtures, mocked HTTP, and temporary storage. Tests cover marginal probabilities, the analytic two-race Gaussian joint probability, seat/control totals, the tie-break and unknown-caucus cases, parsing and normalization, complete refreshes, retained caches after failures, settings recovery, menu navigation, EOF, and chart formatting. Tests do not call live services or change your saved app data.
+The published output includes `Data/bundled-predictions.json` and can forecast without network access. The MSTest suite uses seeded simulations, captured Gamma fixtures, mocked HTTP, and temporary storage. Tests cover marginal probabilities, the analytic two-race Gaussian joint probability, independent aggregation against enumerated outcomes, bundled-data direct results, conditional sampling, convergence at rho 0.99, forced numerical failure, weighted percentiles, inclusive tail probabilities, seat/control totals, the tie-break and unknown-caucus cases, parsing and normalization, complete refreshes, retained caches after failures, settings recovery, menu navigation, cancellation, EOF, and chart formatting. Tests do not call live services or change your saved app data.
