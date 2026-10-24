@@ -1,0 +1,238 @@
+using System.Net;
+using System.Globalization;
+using System.Text;
+using System.Text.Json;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace USSenateElectionsForecast.Tests;
+
+[TestClass]
+public sealed class ConsoleTests
+{
+    [TestMethod]
+    public async Task MenusValidateInputAndNavigateBackWithoutRecursion()
+    {
+        using var scenario = new Scenario("bad\n4\n3\n9\n0\n0\n");
+        await scenario.RunAsync();
+        StringAssert.Contains(scenario.Text, "US Senate Elections Forecast");
+        StringAssert.Contains(scenario.Text, "1) Independent Monte Carlo Simulation");
+        StringAssert.Contains(scenario.Text, "2) Correlated Monte Carlo Simulation");
+        StringAssert.Contains(scenario.Text, "3) Configure");
+        StringAssert.Contains(scenario.Text, "0) Exit");
+        StringAssert.Contains(scenario.Text, "0) Back");
+        Assert.AreEqual(3, Occurrences(scenario.Text, "Please enter a number from 0 to 3."));
+        Assert.DoesNotContain("\u001b", scenario.Text);
+    }
+
+    [TestMethod]
+    public async Task RhoAndCountRejectInvalidValuesAndPersistValidValues()
+    {
+        using var scenario = new Scenario("3\n2\nNaN\nInfinity\n-0.01\n1\n0.99\n3\n999\n10000001\n1,2,3,4\n1,000\n0\n0\n");
+        await scenario.RunAsync();
+        AppSettings settings = scenario.Store.LoadSettings();
+        Assert.AreEqual(0.99, settings.Rho);
+        Assert.AreEqual(1_000, settings.TrialCount);
+        Assert.AreEqual(4, Occurrences(scenario.Text, "Enter a finite number between"));
+        Assert.AreEqual(3, Occurrences(scenario.Text, "Enter a whole number between"));
+    }
+
+    [TestMethod]
+    public async Task BlankValuesRetainSettingsAndZeroIsValidRho()
+    {
+        using var scenario = new Scenario("3\n2\n0.123456\n2\n\n2\n0\n3\n\n0\n0\n");
+        await scenario.RunAsync();
+        AppSettings settings = scenario.Store.LoadSettings();
+        Assert.AreEqual(0, settings.Rho);
+        Assert.AreEqual(100_000, settings.TrialCount);
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Configuration saved."));
+        StringAssert.Contains(scenario.Text, "Rho: 0.123456");
+    }
+
+    [TestMethod]
+    public async Task FailedUpdateRetainsSavedPredictionsAndReturnsToConfigure()
+    {
+        using var scenario = new Scenario("3\n1\n\n0\n0\n");
+        var before = scenario.Store.LoadSnapshot();
+        await scenario.RunAsync();
+        var after = scenario.Store.LoadSnapshot();
+        Assert.AreEqual(before.RetrievedAt, after.RetrievedAt);
+        StringAssert.Contains(scenario.Text, "Could not update predictions:");
+        StringAssert.Contains(scenario.Text, "The previous predictions are still selected.");
+        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "1) Update Predictions from Polymarket"));
+    }
+
+    [TestMethod]
+    public async Task SuccessfulUpdatePersistsAllRacesAndUsesNewSnapshotForSimulation()
+    {
+        using var handler = new SuccessfulRequestHandler();
+        using var scenario = new Scenario("3\n1\n\n0\n1\n\n0\n", handler: handler);
+        scenario.Store.SaveSnapshot(TestSnapshots.Certain() with { RetrievedAt = DateTimeOffset.UtcNow.AddDays(-2) });
+        scenario.Store.SaveSettings(new AppSettings(0.12, 1_000));
+        DateTimeOffset began = DateTimeOffset.UtcNow;
+        await scenario.RunAsync();
+        PredictionSnapshot saved = scenario.Store.LoadSnapshot();
+        Assert.AreEqual(35, handler.RequestCount);
+        Assert.IsGreaterThanOrEqualTo(began, saved.RetrievedAt);
+        Assert.AreEqual(JsonSerializer.Serialize(TestSnapshots.Load().Races, ForecastJson.Options),
+            JsonSerializer.Serialize(saved.Races, ForecastJson.Options));
+        StringAssert.Contains(scenario.Text, "Updated 35 races. Predictions have been saved.");
+        string timestamp = saved.RetrievedAt.UtcDateTime.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture);
+        StringAssert.Contains(scenario.Text, $"Trials: 1,000 | Predictions retrieved: {timestamp}");
+        StringAssert.Contains(scenario.Text, "Senate Control Probability:");
+    }
+
+    [TestMethod]
+    public async Task MissingSnapshotLeavesMenusUsableAndExplainsDisabledSimulation()
+    {
+        using var scenario = new Scenario("1\n\n3\n0\n0\n", noSnapshot: true);
+        await scenario.RunAsync();
+        StringAssert.Contains(scenario.Text, "Predictions unavailable.");
+        StringAssert.Contains(scenario.Text, "Simulation is unavailable until predictions are loaded.");
+        StringAssert.Contains(scenario.Text, "1) Update Predictions from Polymarket");
+    }
+
+    [TestMethod]
+    public async Task BothSimulationMenusRenderPartyDistributionsAndDemocraticThresholds()
+    {
+        using var scenario = new Scenario("1\n\n2\n\n0\n");
+        scenario.Store.SaveSettings(new AppSettings(0.12, 1_000));
+        await scenario.RunAsync();
+        StringAssert.Contains(scenario.Text, "Independent Monte Carlo Simulation");
+        StringAssert.Contains(scenario.Text, "Correlated Monte Carlo Simulation");
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Senate Control Probability:"));
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Democratic Caucus Seat Distribution:"));
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Republican Caucus Seat Distribution:"));
+        Assert.DoesNotContain("Unknown / Unaffiliated Seat Distribution:", scenario.Text);
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Democratic seat probabilities (at least):"));
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Probability of >=50 Dem Seats:"));
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Probability of >=60 Dem Seats:"));
+        StringAssert.Contains(scenario.Text, "90% interval:");
+        StringAssert.Contains(scenario.Text, "shared latent Gaussian correlation");
+    }
+
+    [TestMethod]
+    public void DemocraticThresholdFooterIncludesExactThresholdAndHigherSeats()
+    {
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        int[] democratic = new int[101], republican = new int[101], unknown = new int[101];
+        democratic[51] = 2;
+        democratic[52] = 3;
+        democratic[60] = 4;
+        democratic[61] = 1;
+        republican[49] = 2;
+        republican[48] = 3;
+        republican[40] = 4;
+        republican[39] = 1;
+        unknown[0] = 10;
+        var result = new SimulationResult(SimulationMode.Independent, 10, 0, DateTimeOffset.UtcNow,
+            new SeatDistribution(democratic), new SeatDistribution(republican), new SeatDistribution(unknown), 10, 0, 0);
+
+        new ConsolePresentation(output).Results(result);
+
+        string text = output.ToString();
+        StringAssert.Contains(text, "Probability of >=50 Dem Seats: 100.00 %");
+        StringAssert.Contains(text, "Probability of >=51 Dem Seats: 100.00 %");
+        StringAssert.Contains(text, "Probability of >=52 Dem Seats: 80.00 %");
+        StringAssert.Contains(text, "Probability of >=59 Dem Seats: 50.00 %");
+        StringAssert.Contains(text, "Probability of >=60 Dem Seats: 50.00 %");
+        Assert.IsGreaterThan(text.IndexOf("Republican Caucus Seat Distribution:", StringComparison.Ordinal),
+            text.IndexOf("Democratic seat probabilities (at least):", StringComparison.Ordinal));
+        Assert.DoesNotContain("Unknown / Unaffiliated Seat Distribution:", text);
+    }
+
+    [TestMethod]
+    public async Task EndOfInputExitsFromEveryPrompt()
+    {
+        foreach (string input in new[] { "", "3\n", "3\n2\n", "3\n3\n", "1\n" })
+        {
+            using var scenario = new Scenario(input);
+            scenario.Store.SaveSettings(new AppSettings(0.12, 1_000));
+            await scenario.RunAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        }
+    }
+
+    [TestMethod]
+    public void RenderingUsesFortyCellFractionalBarsAndNoAnsiForInjectedWriter()
+    {
+        using var output = new StringWriter();
+        var presentation = new ConsolePresentation(output, enableColor: true);
+        int[] democratic = new int[101], republican = new int[101], unknown = new int[101];
+        democratic[49] = 1; democratic[51] = 79;
+        republican[49] = 79; republican[51] = 1;
+        unknown[0] = 80;
+        var result = new SimulationResult(SimulationMode.Correlated, 80, 0.12, DateTimeOffset.UtcNow,
+            new SeatDistribution(democratic), new SeatDistribution(republican), new SeatDistribution(unknown), 79, 1, 0);
+        presentation.Context(new AppSettings(), TestSnapshots.Load());
+        presentation.Results(result);
+        string text = output.ToString();
+        Assert.DoesNotContain("\u001b", text);
+        string fractionalRow = text.Split('\n').First(line => line.Contains("49 seats") && line.Contains('▌'));
+        Assert.AreEqual(40, fractionalRow.Split('|')[1].Length);
+        StringAssert.Contains(fractionalRow, "1.25");
+        StringAssert.Contains(text, "Mean:");
+        StringAssert.Contains(text, "tie-breaking vote favors the Republican caucus");
+        foreach (string line in text.ReplaceLineEndings("\n").Split('\n')) Assert.IsLessThanOrEqualTo(80, line.Length);
+    }
+
+    private static int Occurrences(string text, string term) => text.Split(term, StringSplitOptions.None).Length - 1;
+
+    private sealed class Scenario : IDisposable
+    {
+        private readonly string _directory = Path.Combine(Path.GetTempPath(), "senate-console-tests-" + Guid.NewGuid().ToString("N"));
+        private readonly StringReader _input;
+        private readonly StringWriter _output = new();
+        private readonly HttpClient _http;
+        public ForecastStore Store { get; }
+        public string Text => _output.ToString();
+
+        public Scenario(string input, bool noSnapshot = false, HttpMessageHandler? handler = null)
+        {
+            _input = new StringReader(input);
+            _http = new HttpClient(handler ?? new FailedRequestHandler());
+            Store = new ForecastStore(_directory, noSnapshot ? Path.Combine(_directory, "missing.json")
+                : Path.Combine(AppContext.BaseDirectory, "Data", "bundled-predictions.json"));
+            if (!noSnapshot) Store.SaveSnapshot(TestSnapshots.Load());
+        }
+
+        public Task RunAsync() => new ConsoleApp(_input, _output, Store, new PolymarketClient(_http),
+            new SimulationEngine(), new ConsolePresentation(_output)).RunAsync();
+
+        public void Dispose()
+        {
+            _input.Dispose();
+            _output.Dispose();
+            _http.Dispose();
+            if (Directory.Exists(_directory)) Directory.Delete(_directory, recursive: true);
+        }
+    }
+
+    private sealed class FailedRequestHandler : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
+            Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = new StringContent("Invalid request.") });
+    }
+
+    private sealed class SuccessfulRequestHandler : HttpMessageHandler
+    {
+        private readonly Dictionary<string, string> _events;
+        private int _requestCount;
+        public int RequestCount => _requestCount;
+
+        public SuccessfulRequestHandler()
+        {
+            using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "polymarket-events.json")));
+            _events = document.RootElement.GetProperty("events").EnumerateArray()
+                .ToDictionary(item => item.GetProperty("slug").GetString()!, item => item.GetRawText());
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Interlocked.Increment(ref _requestCount);
+            string slug = Uri.UnescapeDataString(request.RequestUri!.Segments[^1]);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(_events[slug], Encoding.UTF8, "application/json")
+            });
+        }
+    }
+}
