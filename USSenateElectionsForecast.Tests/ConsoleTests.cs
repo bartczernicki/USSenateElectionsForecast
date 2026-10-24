@@ -20,6 +20,9 @@ public sealed class ConsoleTests
         StringAssert.Contains(scenario.Text, "3) Conditional Monte Carlo");
         StringAssert.Contains(scenario.Text, "4) Direct Probability Calculation");
         StringAssert.Contains(scenario.Text, "5) Configure");
+        StringAssert.Contains(scenario.Text, "Options 2/3 and option 4's correlated result use the same model.");
+        StringAssert.Contains(scenario.Text, "At about 1,000,000 samples, 2/3 generally approach 4's direct calculation.");
+        StringAssert.Contains(scenario.Text, "option 4 integrates without sampling.");
         StringAssert.Contains(scenario.Text, "0) Exit");
         StringAssert.Contains(scenario.Text, "0) Back");
         Assert.AreEqual(2, Occurrences(scenario.Text, "Please enter a number from 0 to 5."));
@@ -35,6 +38,9 @@ public sealed class ConsoleTests
         await scenario.RunAsync();
         AppSettings settings = scenario.Store.LoadSettings();
         Assert.AreEqual(0.99, settings.Rho);
+        StringAssert.Contains(scenario.Text, "Rho controls how strongly underlying race scores move together.");
+        StringAssert.Contains(scenario.Text, "Default 0.12 assigns 12% of score variance to national effects, 88% to local.");
+        StringAssert.Contains(scenario.Text, "0.12 is our modeling assumption, not a published Silver estimate.");
         Assert.AreEqual(1_000, settings.TrialCount);
         Assert.AreEqual(4, Occurrences(scenario.Text, "Enter a finite number between"));
         Assert.AreEqual(3, Occurrences(scenario.Text, "Enter a whole number between"));

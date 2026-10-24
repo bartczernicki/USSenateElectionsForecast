@@ -30,6 +30,7 @@ public sealed class ConsoleApp(
             presentation.Context(_settings, _snapshot);
             presentation.Menu(null,
                 ["Independent Monte Carlo Simulation", "Correlated Monte Carlo Simulation", "Conditional Monte Carlo", "Direct Probability Calculation", "Configure"], "Exit");
+            presentation.MethodAgreementNote();
             int? selection = ReadSelection(5);
             if (selection is null or 0) return;
             if (selection == 5)

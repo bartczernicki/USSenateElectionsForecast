@@ -66,6 +66,11 @@ public sealed class ConsolePresentation
     {
         _output.WriteLine();
         _output.WriteLine($"Simulation count: {settings.TrialCount.ToString("N0", CultureInfo.InvariantCulture)} | Rho: {settings.Rho.ToString("0.00############", CultureInfo.InvariantCulture)}");
+        Prose("Rho controls how strongly underlying race scores move together.");
+        Prose("0 means independent; higher rho means a stronger shared national swing.");
+        Prose("Default 0.12 assigns 12% of score variance to national effects, 88% to local.");
+        Prose("Past shared polling errors motivate correlation (Nate Silver/FiveThirtyEight).");
+        Prose("0.12 is our modeling assumption, not a published Silver estimate.");
         if (snapshot is null)
         {
             Warning("Predictions unavailable. Use Configure > Update Predictions from Polymarket before forecasting.");
@@ -80,6 +85,14 @@ public sealed class ConsolePresentation
     }
 
     public void Results(SimulationResult result) => Results(ProbabilityResult.FromSimulation(result));
+
+    public void MethodAgreementNote()
+    {
+        _output.WriteLine();
+        Prose("Options 2/3 and option 4's correlated result use the same model.");
+        Prose("At about 1,000,000 samples, 2/3 generally approach 4's direct calculation.");
+        Prose("Small sampling differences can remain; option 4 integrates without sampling.");
+    }
 
     public void Results(ProbabilityResult result)
     {

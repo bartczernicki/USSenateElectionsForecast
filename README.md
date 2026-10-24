@@ -30,6 +30,8 @@ Configure
 
 Enter a menu number, use `0` to go back or exit, and press Enter after an action to return. Blank configuration input keeps the current value. Defaults are **rho 0.12** and a **simulation count of 100,000**. Rho accepts finite numbers from 0 through 0.99 using a decimal point; counts accept integers from 1,000 through 10,000,000. The count means election trials for options 1 and 2 and national-factor samples for option 3. Option 4 calculates both models directly and ignores the simulation count. EOF exits cleanly; Ctrl+C cancels a forecast calculation or refresh.
 
+Options **2, 3, and the correlated result in 4** calculate the same probability model with different numerical methods. At around **1,000,000 samples**, the sampled estimates generally approach the direct correlated calculation, although small sampling differences can remain. Option 4 integrates directly without sampling. Increasing the sample count reduces calculation noise; it does not remove uncertainty about the election itself.
+
 **Configure > List Current US Senate Polymarket Probabilities** shows all 79 outcome probabilities from the selected snapshot without fetching new data or changing saved settings. Races appear closest first: closeness is the gap in percentage points between the two highest normalized outcome probabilities in each race. Smaller gaps come first, with state names breaking ties; outcomes within a race appear from highest to lowest probability. The list includes the snapshot's retrieval time and identifies special elections. Use **Update Predictions from Polymarket** first to refresh the listed probabilities.
 
 ## Forecast model
@@ -50,6 +52,8 @@ Z[i] = sqrt(rho) * nationalFactor + sqrt(1 - rho) * raceFactor[i]
 ```
 
 Cumulative normal thresholds select a race's outcome in the fixed order Democratic caucus, unknown caucus, Republican caucus. Higher national scores favor Republicans. This preserves each race's marginal probabilities. **Rho is correlation between the underlying normal scores, not between observed win/loss indicators.** Independent mode ignores the configured rho; correlated mode with rho zero has the same independent behavior. Normal sampling and quantiles use MathNet.Numerics 5.0.0.
+
+**Why default to 0.12?** It is a modest, configurable modeling assumption: the shared national factor contributes **12% of each standardized race score's variance**, with the remaining **88%** coming from local effects. Historical shared polling errors motivate including correlation. [Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology) describes national, local, and demographic sources of correlated forecast errors. That supports the modeling principle; **0.12 itself is this app's assumption, not a published Silver estimate or a coefficient calibrated from historical data by this app**. Change rho to explore how stronger or weaker shared movement affects Senate control.
 
 ### Conditional Monte Carlo
 
