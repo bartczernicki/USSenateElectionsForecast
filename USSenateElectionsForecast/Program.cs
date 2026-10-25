@@ -26,7 +26,7 @@ internal static class Program
         Console.CancelKeyPress += cancelHandler;
         try
         {
-            var store = new ForecastStore(dataDirectory, Path.Combine(AppContext.BaseDirectory, "Data", "bundled-predictions.json"));
+            var store = new ForecastStore(dataDirectory, Path.Combine(AppContext.BaseDirectory, "Data"));
             using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
             http.DefaultRequestHeaders.UserAgent.ParseAdd("USSenateElectionsForecast/1.0");
             var presentation = new ConsolePresentation(Console.Out, enableColor: !Console.IsOutputRedirected);

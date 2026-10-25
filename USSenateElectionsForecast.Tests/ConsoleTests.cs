@@ -20,14 +20,15 @@ public sealed class ConsoleTests
         StringAssert.Contains(scenario.Text, "3) Conditional Monte Carlo");
         StringAssert.Contains(scenario.Text, "4) Direct Probability Calculation");
         StringAssert.Contains(scenario.Text, "5) Configure");
-        StringAssert.Contains(scenario.Text, "Options 2/3 and option 4's correlated result use the same model.");
-        StringAssert.Contains(scenario.Text, "At about 1,000,000 samples, 2/3 generally approach 4's direct calculation.");
-        StringAssert.Contains(scenario.Text, "option 4 integrates without sampling.");
+        Assert.DoesNotContain("Options 2/3 and option 4's correlated result use the same model.", scenario.Text);
+        Assert.DoesNotContain("At about 1,000,000 samples, 2/3 generally approach 4's direct calculation.", scenario.Text);
+        Assert.DoesNotContain("Small sampling differences can remain; option 4 integrates without sampling.", scenario.Text);
+        Assert.DoesNotContain("Select an option:", scenario.Text);
         StringAssert.Contains(scenario.Text, "0) Exit");
         StringAssert.Contains(scenario.Text, "0) Back");
-        Assert.AreEqual(2, Occurrences(scenario.Text, "Please enter a number from 0 to 5."));
-        Assert.AreEqual(1, Occurrences(scenario.Text, "Please enter a number from 0 to 4."));
+        Assert.AreEqual(3, Occurrences(scenario.Text, "Please enter a number from 0 to 5."));
         StringAssert.Contains(scenario.Text, "4) List Current US Senate Polymarket Probabilities");
+        StringAssert.Contains(scenario.Text, "5) Select Predictions File");
         Assert.DoesNotContain("\u001b", scenario.Text);
     }
 
@@ -38,9 +39,9 @@ public sealed class ConsoleTests
         await scenario.RunAsync();
         AppSettings settings = scenario.Store.LoadSettings();
         Assert.AreEqual(0.99, settings.Rho);
-        StringAssert.Contains(scenario.Text, "Rho controls how strongly underlying race scores move together.");
-        StringAssert.Contains(scenario.Text, "Default 0.12 assigns 12% of score variance to national effects, 88% to local.");
-        StringAssert.Contains(scenario.Text, "0.12 is our modeling assumption, not a published Silver estimate.");
+        StringAssert.Contains(scenario.Text, "- Rho links race scores: 0 = independent; higher = more national swing.");
+        StringAssert.Contains(scenario.Text, "- Default 0.12: 12% national / 88% local variance; our assumption, not Silver's.");
+        StringAssert.Contains(scenario.Text, "- Shared polling errors motivate correlation (Silver/FiveThirtyEight).");
         Assert.AreEqual(1_000, settings.TrialCount);
         Assert.AreEqual(4, Occurrences(scenario.Text, "Enter a finite number between"));
         Assert.AreEqual(3, Occurrences(scenario.Text, "Enter a whole number between"));
@@ -76,12 +77,18 @@ public sealed class ConsoleTests
     {
         using var handler = new SuccessfulRequestHandler();
         using var scenario = new Scenario("5\n1\n\n4\n\n0\n1\n\n0\n", handler: handler);
-        scenario.Store.SaveSnapshot(TestSnapshots.Certain() with { RetrievedAt = DateTimeOffset.UtcNow.AddDays(-2) });
-        scenario.Store.SaveSettings(new AppSettings(0.12, 1_000));
+        string previousFile = scenario.Store.SaveSnapshot(TestSnapshots.Certain() with
+        {
+            RetrievedAt = TestSnapshots.Load().RetrievedAt.AddDays(-1)
+        });
+        string previousContents = File.ReadAllText(scenario.Store.GetSnapshotPath(previousFile));
+        scenario.Store.SaveSettings(new AppSettings(0.12, 1_000, previousFile));
         DateTimeOffset began = DateTimeOffset.UtcNow;
         await scenario.RunAsync();
         PredictionSnapshot saved = scenario.Store.LoadSnapshot();
         Assert.AreEqual(35, handler.RequestCount);
+        Assert.IsNull(scenario.Store.LoadSettings().SelectedPredictionFile);
+        Assert.AreEqual(previousContents, File.ReadAllText(scenario.Store.GetSnapshotPath(previousFile)));
         Assert.IsGreaterThanOrEqualTo(began, saved.RetrievedAt);
         Assert.AreEqual(JsonSerializer.Serialize(TestSnapshots.Load().Races, ForecastJson.Options),
             JsonSerializer.Serialize(saved.Races, ForecastJson.Options));
@@ -100,7 +107,8 @@ public sealed class ConsoleTests
         using var handler = new FailedRequestHandler();
         using var scenario = new Scenario("5\n4\n\n0\n0\n", handler: handler);
         scenario.Store.SaveSettings(new AppSettings(0.42, 1_000));
-        string predictionsBefore = File.ReadAllText(scenario.Store.SnapshotPath);
+        string predictionsPath = scenario.Store.GetSnapshotPath(scenario.Store.LoadPrediction().FileName);
+        string predictionsBefore = File.ReadAllText(predictionsPath);
         string settingsBefore = File.ReadAllText(scenario.Store.SettingsPath);
         using var expectedListing = new StringWriter(CultureInfo.InvariantCulture);
         new ConsolePresentation(expectedListing).Predictions(scenario.Store.LoadSnapshot());
@@ -108,7 +116,7 @@ public sealed class ConsoleTests
         await scenario.RunAsync();
 
         Assert.AreEqual(0, handler.RequestCount);
-        Assert.AreEqual(predictionsBefore, File.ReadAllText(scenario.Store.SnapshotPath));
+        Assert.AreEqual(predictionsBefore, File.ReadAllText(predictionsPath));
         Assert.AreEqual(settingsBefore, File.ReadAllText(scenario.Store.SettingsPath));
         StringAssert.Contains(scenario.Text, expectedListing.ToString());
         Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "4) List Current US Senate Polymarket Probabilities"));
@@ -125,6 +133,173 @@ public sealed class ConsoleTests
         StringAssert.Contains(scenario.Text, "1) Update Predictions from Polymarket");
         StringAssert.Contains(scenario.Text, "load them.");
         Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "4) List Current US Senate Polymarket Probabilities"));
+    }
+
+    [TestMethod]
+    public async Task HistoricalSelectionPersistsAndIsUsedForForecastsAfterRestart()
+    {
+        using var handler = new FailedRequestHandler();
+        using var scenario = new Scenario("5\n5\n3\n\n0\n1\n\n0\n", handler: handler);
+        string older = scenario.Store.SaveSnapshot(TestSnapshots.Certain(democraticWins: 35) with
+        {
+            RetrievedAt = TestSnapshots.Load().RetrievedAt.AddDays(-1)
+        });
+        scenario.Store.SaveSettings(new AppSettings(0, 1_000));
+
+        await scenario.RunAsync();
+
+        Assert.AreEqual(older, scenario.Store.LoadSettings().SelectedPredictionFile);
+        StringAssert.Contains(scenario.Text, "1) Latest available (selected)");
+        StringAssert.Contains(scenario.Text, "2) polymarket_predictions_20261024.json (active)");
+        StringAssert.Contains(scenario.Text, $"3) {older}");
+        StringAssert.Contains(scenario.Text, $"Selected predictions file: {older}");
+        StringAssert.Contains(scenario.Text, $"Predictions file: {older}");
+        StringAssert.Contains(scenario.Text, "Probability of >=60 Dem Seats: 100.00 %");
+
+        int restartOffset = scenario.Text.Length;
+        await scenario.RunAgainAsync("1\n\n0\n");
+        string restartOutput = scenario.Text[restartOffset..];
+        StringAssert.Contains(restartOutput, $"Predictions file: {older}");
+        StringAssert.Contains(restartOutput, "Probability of >=60 Dem Seats: 100.00 %");
+        Assert.AreEqual(0, handler.RequestCount);
+    }
+
+    [TestMethod]
+    public async Task ReturningToLatestSelectsNewestAvailableFileAndKeepsHistoricalData()
+    {
+        using var handler = new FailedRequestHandler();
+        using var scenario = new Scenario("5\n5\n1\n\n0\n0\n", handler: handler);
+        string older = scenario.Store.SaveSnapshot(TestSnapshots.Certain(democraticWins: 35) with
+        {
+            RetrievedAt = TestSnapshots.Load().RetrievedAt.AddDays(-1)
+        });
+        scenario.Store.SaveSettings(new AppSettings(0, 1_000, older));
+        string newest = scenario.Store.SaveSnapshot(TestSnapshots.Certain() with
+        {
+            RetrievedAt = TestSnapshots.Load().RetrievedAt.AddDays(2)
+        });
+        string olderContents = File.ReadAllText(scenario.Store.GetSnapshotPath(older));
+
+        await scenario.RunAsync();
+
+        Assert.IsNull(scenario.Store.LoadSettings().SelectedPredictionFile);
+        StringAssert.Contains(scenario.Text, $"Selected predictions file: {newest}");
+        StringAssert.Contains(scenario.Text, $"Predictions file: {newest}");
+        Assert.AreEqual(olderContents, File.ReadAllText(scenario.Store.GetSnapshotPath(older)));
+        Assert.AreEqual(0, handler.RequestCount);
+    }
+
+    [TestMethod]
+    public async Task MissingRememberedFileFallsBackToLatestWithoutRewritingSettings()
+    {
+        using var handler = new FailedRequestHandler();
+        using var scenario = new Scenario("0\n", handler: handler);
+        scenario.Store.SaveSettings(new AppSettings(0.2, 1_000, "polymarket_predictions_20261020.json"));
+        string settingsBefore = File.ReadAllText(scenario.Store.SettingsPath);
+
+        await scenario.RunAsync();
+
+        StringAssert.Contains(scenario.Text.ReplaceLineEndings(" "), "is missing or invalid.");
+        StringAssert.Contains(scenario.Text, "polymarket_predictions_20261020.json");
+        StringAssert.Contains(scenario.Text, "Predictions file: polymarket_predictions_20261024.json");
+        Assert.AreEqual(settingsBefore, File.ReadAllText(scenario.Store.SettingsPath));
+        Assert.AreEqual(0, handler.RequestCount);
+    }
+
+    [TestMethod]
+    public async Task PickerBackAndInvalidInputKeepSelectedFileAndSettings()
+    {
+        using var handler = new FailedRequestHandler();
+        using var scenario = new Scenario("5\n5\n9\n0\n0\n0\n", handler: handler);
+        string older = scenario.Store.SaveSnapshot(TestSnapshots.Load() with
+        {
+            RetrievedAt = TestSnapshots.Load().RetrievedAt.AddDays(-1)
+        });
+        scenario.Store.SaveSettings(new AppSettings(0.2, 1_000, older));
+        string settingsBefore = File.ReadAllText(scenario.Store.SettingsPath);
+
+        await scenario.RunAsync();
+
+        StringAssert.Contains(scenario.Text, "Please enter a number from 0 to 3.");
+        StringAssert.Contains(scenario.Text, $"Predictions file: {older}");
+        Assert.DoesNotContain("Selected predictions file:", scenario.Text);
+        Assert.AreEqual(settingsBefore, File.ReadAllText(scenario.Store.SettingsPath));
+        Assert.AreEqual(0, handler.RequestCount);
+    }
+
+    [TestMethod]
+    public async Task FailedSelectionSettingsSaveRetainsPreviouslyActivePredictions()
+    {
+        using var handler = new FailedRequestHandler();
+        using var scenario = new Scenario("5\n5\n3\n\n4\n\n0\n0\n", handler: handler);
+        string older = scenario.Store.SaveSnapshot(TestSnapshots.Certain(democraticWins: 35) with
+        {
+            RetrievedAt = TestSnapshots.Load().RetrievedAt.AddDays(-1)
+        });
+        Directory.CreateDirectory(scenario.Store.SettingsPath);
+        using var expectedListing = new StringWriter(CultureInfo.InvariantCulture);
+        new ConsolePresentation(expectedListing).Predictions(TestSnapshots.Load());
+
+        await scenario.RunAsync();
+
+        StringAssert.Contains(scenario.Text, "Error:");
+        Assert.DoesNotContain("Selected predictions file:", scenario.Text);
+        Assert.DoesNotContain($"Predictions file: {older}", scenario.Text);
+        StringAssert.Contains(scenario.Text, expectedListing.ToString());
+        Assert.AreEqual(0, handler.RequestCount);
+    }
+
+    [TestMethod]
+    public async Task FileRemovedAfterPickerOpensDoesNotChangeSelectedPredictions()
+    {
+        using var handler = new FailedRequestHandler();
+        ForecastStore? store = null;
+        using var scenario = new Scenario("5\n5\n3\n\n4\n\n0\n0\n", handler: handler,
+            beforeRead: read =>
+            {
+                if (read == 3) File.Delete(store!.GetSnapshotPath("polymarket_predictions_20261023.json"));
+            });
+        store = scenario.Store;
+        string older = store.SaveSnapshot(TestSnapshots.Certain(democraticWins: 35) with
+        {
+            RetrievedAt = TestSnapshots.Load().RetrievedAt.AddDays(-1)
+        });
+        store.SaveSettings(new AppSettings(0, 1_000));
+        string settingsBefore = File.ReadAllText(store.SettingsPath);
+
+        await scenario.RunAsync();
+
+        StringAssert.Contains(scenario.Text, "Error:");
+        Assert.DoesNotContain("Selected predictions file:", scenario.Text);
+        Assert.DoesNotContain($"Predictions file: {older}", scenario.Text);
+        Assert.AreEqual(settingsBefore, File.ReadAllText(store.SettingsPath));
+        Assert.AreEqual(0, handler.RequestCount);
+    }
+
+    [TestMethod]
+    public async Task CancellationAtPickerPromptKeepsSelectionAndExitsWithoutPausing()
+    {
+        using var cancellation = new CancellationTokenSource();
+        using var handler = new FailedRequestHandler();
+        using var scenario = new Scenario("5\n5\n3\n", handler: handler,
+            beforeRead: read =>
+            {
+                if (read == 3) cancellation.Cancel();
+            });
+        scenario.Store.SaveSnapshot(TestSnapshots.Load() with
+        {
+            RetrievedAt = TestSnapshots.Load().RetrievedAt.AddDays(-1)
+        });
+        scenario.Store.SaveSettings(new AppSettings(0, 1_000));
+        string settingsBefore = File.ReadAllText(scenario.Store.SettingsPath);
+
+        await scenario.RunAsync(cancellation.Token).WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.IsTrue(cancellation.IsCancellationRequested);
+        Assert.DoesNotContain("Selected predictions file:", scenario.Text);
+        Assert.DoesNotContain("Press Enter to return", scenario.Text);
+        Assert.AreEqual(settingsBefore, File.ReadAllText(scenario.Store.SettingsPath));
+        Assert.AreEqual(0, handler.RequestCount);
     }
 
     [TestMethod]
@@ -273,7 +448,7 @@ public sealed class ConsoleTests
     [TestMethod]
     public async Task EndOfInputExitsFromEveryPrompt()
     {
-        foreach (string input in new[] { "", "5\n", "5\n2\n", "5\n3\n", "5\n4\n", "1\n", "3\n", "4\n" })
+        foreach (string input in new[] { "", "5\n", "5\n2\n", "5\n3\n", "5\n4\n", "5\n5\n", "5\n5\n2\n", "1\n", "3\n", "4\n" })
         {
             using var scenario = new Scenario(input);
             scenario.Store.SaveSettings(new AppSettings(0, 1_000));
@@ -309,7 +484,7 @@ public sealed class ConsoleTests
     private sealed class Scenario : IDisposable
     {
         private readonly string _directory = Path.Combine(Path.GetTempPath(), "senate-console-tests-" + Guid.NewGuid().ToString("N"));
-        private readonly StringReader _input;
+        private readonly TextReader _input;
         private readonly StringWriter _output;
         private readonly HttpClient _http;
         private readonly ProbabilityCalculationEngine _probabilityEngine;
@@ -317,14 +492,15 @@ public sealed class ConsoleTests
         public string Text => _output.ToString();
 
         public Scenario(string input, bool noSnapshot = false, HttpMessageHandler? handler = null,
-            ProbabilityCalculationEngine? probabilityEngine = null, StringWriter? writer = null)
+            ProbabilityCalculationEngine? probabilityEngine = null, StringWriter? writer = null,
+            Action<int>? beforeRead = null)
         {
-            _input = new StringReader(input);
+            _input = beforeRead is null ? new StringReader(input) : new CallbackReader(input, beforeRead);
             _http = new HttpClient(handler ?? new FailedRequestHandler());
             _probabilityEngine = probabilityEngine ?? new ProbabilityCalculationEngine();
             _output = writer ?? new StringWriter(CultureInfo.InvariantCulture);
-            Store = new ForecastStore(_directory, noSnapshot ? Path.Combine(_directory, "missing.json")
-                : Path.Combine(AppContext.BaseDirectory, "Data", "bundled-predictions.json"));
+            Store = new ForecastStore(_directory, noSnapshot ? Path.Combine(_directory, "missing")
+                : Path.Combine(AppContext.BaseDirectory, "Data"));
             if (!noSnapshot) Store.SaveSnapshot(TestSnapshots.Load());
         }
 
@@ -332,12 +508,30 @@ public sealed class ConsoleTests
             new PolymarketClient(_http), new SimulationEngine(), new ConsolePresentation(_output),
             _probabilityEngine).RunAsync(cancellationToken);
 
+        public async Task RunAgainAsync(string input)
+        {
+            using var reader = new StringReader(input);
+            await new ConsoleApp(reader, _output, Store, new PolymarketClient(_http),
+                new SimulationEngine(), new ConsolePresentation(_output), _probabilityEngine).RunAsync();
+        }
+
         public void Dispose()
         {
             _input.Dispose();
             _output.Dispose();
             _http.Dispose();
             if (Directory.Exists(_directory)) Directory.Delete(_directory, recursive: true);
+        }
+    }
+
+    private sealed class CallbackReader(string text, Action<int> beforeRead) : StringReader(text)
+    {
+        private int _reads;
+
+        public override string? ReadLine()
+        {
+            beforeRead(++_reads);
+            return base.ReadLine();
         }
     }
 

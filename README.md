@@ -10,7 +10,7 @@ Install the .NET 10 SDK, then run from this directory:
 dotnet run --project USSenateElectionsForecast
 ```
 
-The application works offline immediately using a real Polymarket snapshot captured on **October 24, 2026 at 21:15:35 UTC (5:15 p.m. Eastern)**. The selected snapshot's retrieval date appears in the menus and results. Select **Configure > Update Predictions from Polymarket** to retrieve current prices. No account, wallet, or API key is required.
+The application works offline immediately using `polymarket_predictions_20261024.json`, a real Polymarket snapshot captured on **October 24, 2026 at 21:15:35 UTC (5:15 p.m. Eastern)**. The active filename appears in the menus alongside its retrieval time; results also identify the retrieval time. No predictions are downloaded automatically. Select **Configure > Update Predictions from Polymarket** to retrieve current prices. No account, wallet, or API key is required.
 
 ```text
 1) Independent Monte Carlo Simulation
@@ -25,10 +25,13 @@ Configure
 2) Configure Rho (Correlation)
 3) Configure Simulation Count
 4) List Current US Senate Polymarket Probabilities
+5) Select Predictions File
 0) Back
 ```
 
 Enter a menu number, use `0` to go back or exit, and press Enter after an action to return. Blank configuration input keeps the current value. Defaults are **rho 0.12** and a **simulation count of 100,000**. Rho accepts finite numbers from 0 through 0.99 using a decimal point; counts accept integers from 1,000 through 10,000,000. The count means election trials for options 1 and 2 and national-factor samples for option 3. Option 4 calculates both models directly and ignores the simulation count. EOF exits cleanly; Ctrl+C cancels a forecast calculation or refresh.
+
+**Configure > Select Predictions File** lists available `polymarket_predictions_YYYYMMDD.json` snapshots, newest date first, and marks the active file. The default **Latest available** uses the newest valid dated snapshot. Choosing a specific file remembers that choice across restarts; choose **Latest available** again to resume automatic selection. Selecting a file uses saved data without downloading predictions. Use `0` to return without changing the selection.
 
 Options **2, 3, and the correlated result in 4** calculate the same probability model with different numerical methods. At around **1,000,000 samples**, the sampled estimates generally approach the direct correlated calculation, although small sampling differences can remain. Option 4 integrates directly without sampling. Increasing the sample count reduces calculation noise; it does not remove uncertainty about the election itself.
 
@@ -94,9 +97,11 @@ For each contract the parser finds the `Yes` outcome by its label, including whe
 
 Prices are market-implied inputs, not necessarily a normalized categorical distribution. Each race's mutually exclusive Yes prices are divided by their total before simulation. Raw prices must be finite and within 0–1; their total must be within 0.90–1.10 to detect substantially incomplete or changed markets. The bundled data preserves raw prices, normalized probabilities, retrieval time, upstream update times, and source contract identifiers. A current refresh applies the same validation.
 
-The refresh uses at most four concurrent requests, bounded request timeouts, and limited retries for rate limits and server errors. It replaces the saved snapshot only after **all 35 races** validate. Failed, partial, or unrecognized updates leave the previous predictions selected. No missing race receives an invented probability.
+The refresh uses at most four concurrent requests, bounded request timeouts, and limited retries for rate limits and server errors. It saves `polymarket_predictions_YYYYMMDD.json` using the retrieval date in UTC only after **all 35 races** validate. A second refresh on the same UTC date replaces that date's saved file; earlier dates remain available. A successful refresh returns selection to **Latest available**. Failed, partial, or unrecognized updates leave the previous predictions selected. No missing race receives an invented probability.
 
-Settings and refreshed predictions live in `%LOCALAPPDATA%\USSenateElectionsForecast` on Windows (`Environment.SpecialFolder.LocalApplicationData` on other platforms). A valid saved snapshot takes precedence over the bundle. Invalid cached data falls back to the bundle with a message; invalid settings fall back to defaults. Saves use a temporary file and atomic replacement. For a separate data directory:
+Settings and refreshed predictions live in `%LOCALAPPDATA%\USSenateElectionsForecast` on Windows (`Environment.SpecialFolder.LocalApplicationData` on other platforms). Available dated snapshots are discovered in both this data directory and the application's bundled `Data` directory. Dates are sorted by filename; a valid data-directory copy takes precedence over a bundled copy for the same date. Invalid snapshots are skipped with a warning. If a remembered file is missing or invalid, the app warns and uses the latest valid snapshot without rewriting the saved setting; invalid settings fall back to defaults.
+
+Existing `predictions.json` and `polymarket_predictions.json` caches are retained and copied byte for byte to a `polymarket_predictions_YYYYMMDD.json` file based on their UTC retrieval date, unless that dated file already exists. Older `predictions_YYYYMMDD.json` files and remembered selections remain supported; data-directory files are copied to the new prefix without overwriting existing files. Saved snapshots are validated, and saves use a temporary file and atomic replacement. For a separate data directory:
 
 ```powershell
 dotnet run --project USSenateElectionsForecast -- --data-dir .\my-forecast-data
@@ -112,4 +117,4 @@ dotnet test USSenateElectionsForecast.sln -c Release
 dotnet publish USSenateElectionsForecast/USSenateElectionsForecast.csproj -c Release -o artifacts/publish
 ```
 
-The published output includes `Data/bundled-predictions.json` and can forecast without network access. The MSTest suite uses seeded simulations, captured Gamma fixtures, mocked HTTP, and temporary storage. Tests cover marginal probabilities, the analytic two-race Gaussian joint probability, independent aggregation against enumerated outcomes, bundled-data direct results, conditional sampling, convergence at rho 0.99, forced numerical failure, weighted percentiles, inclusive tail probabilities, seat/control totals, the tie-break and unknown-caucus cases, parsing and normalization, complete refreshes, retained caches after failures, settings recovery, menu navigation, cancellation, EOF, and chart formatting. Tests do not call live services or change your saved app data.
+The published output includes `Data/polymarket_predictions_20261024.json` and can forecast without network access. The MSTest suite uses seeded simulations, captured Gamma fixtures, mocked HTTP, and temporary storage. Tests cover marginal probabilities, the analytic two-race Gaussian joint probability, independent aggregation against enumerated outcomes, bundled-data direct results, conditional sampling, convergence at rho 0.99, forced numerical failure, weighted percentiles, inclusive tail probabilities, seat/control totals, the tie-break and unknown-caucus cases, parsing and normalization, complete refreshes, retained caches after failures, dated-file discovery and selection, settings recovery, menu navigation, cancellation, EOF, and chart formatting. Tests do not call live services or change your saved app data.

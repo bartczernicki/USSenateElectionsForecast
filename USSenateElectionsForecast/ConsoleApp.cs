@@ -14,12 +14,13 @@ public sealed class ConsoleApp(
 {
     private AppSettings _settings = new();
     private PredictionSnapshot? _snapshot;
+    private string? _predictionFileName;
 
     public async Task RunAsync(CancellationToken cancellationToken = default)
     {
         presentation.Banner();
         _settings = store.LoadSettings(presentation.Warning);
-        try { _snapshot = store.LoadSnapshot(presentation.Warning); }
+        try { Activate(store.LoadPrediction(_settings.SelectedPredictionFile, presentation.Warning)); }
         catch (Exception error) when (IsStorageError(error))
         {
             presentation.Error($"Could not load predictions: {error.Message}");
@@ -27,10 +28,9 @@ public sealed class ConsoleApp(
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            presentation.Context(_settings, _snapshot);
+            presentation.Context(_settings, _snapshot, _predictionFileName);
             presentation.Menu(null,
                 ["Independent Monte Carlo Simulation", "Correlated Monte Carlo Simulation", "Conditional Monte Carlo", "Direct Probability Calculation", "Configure"], "Exit");
-            presentation.MethodAgreementNote();
             int? selection = ReadSelection(5);
             if (selection is null or 0) return;
             if (selection == 5)
@@ -98,10 +98,10 @@ public sealed class ConsoleApp(
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            presentation.Context(_settings, _snapshot);
+            presentation.Context(_settings, _snapshot, _predictionFileName);
             presentation.Menu("Configure",
-                ["Update Predictions from Polymarket", "Configure Rho (Correlation)", "Configure Simulation Count", "List Current US Senate Polymarket Probabilities"], "Back");
-            int? selection = ReadSelection(4);
+                ["Update Predictions from Polymarket", "Configure Rho (Correlation)", "Configure Simulation Count", "List Current US Senate Polymarket Probabilities", "Select Predictions File"], "Back");
+            int? selection = ReadSelection(5);
             if (selection is null) return false;
             if (selection == 0) return true;
             if (selection == 1)
@@ -111,7 +111,11 @@ public sealed class ConsoleApp(
                 {
                     PredictionSnapshot updated = await client.FetchAsync(cancellationToken);
                     store.SaveSnapshot(updated);
-                    _snapshot = updated;
+                    StoredPrediction latest = store.LoadPrediction(warn: presentation.Warning);
+                    AppSettings settings = _settings with { SelectedPredictionFile = null };
+                    if (_settings.SelectedPredictionFile is not null) store.SaveSettings(settings);
+                    _settings = settings;
+                    Activate(latest);
                     presentation.Success($"Updated {updated.Races.Count} races. Predictions have been saved.");
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { return false; }
@@ -124,13 +128,57 @@ public sealed class ConsoleApp(
             }
             else if (selection == 4)
             {
-                if (_snapshot is not null) presentation.Predictions(_snapshot);
+                if (_snapshot is not null) presentation.Predictions(_snapshot, _predictionFileName);
                 else presentation.Warning("Predictions unavailable. Use Configure > Update Predictions from Polymarket to load them.");
                 if (!Pause()) return false;
+            }
+            else if (selection == 5)
+            {
+                if (!SelectPredictions(cancellationToken)) return false;
             }
             else if (!ConfigureValue(selection == 2)) return false;
         }
         return false;
+    }
+
+    private bool SelectPredictions(CancellationToken cancellationToken)
+    {
+        try
+        {
+            IReadOnlyList<PredictionFileOption> files = store.ListSnapshots(presentation.Warning);
+            if (cancellationToken.IsCancellationRequested) return false;
+            var items = new List<string>
+            {
+                "Latest available" + (_settings.SelectedPredictionFile is null ? " (selected)" : "")
+            };
+            items.AddRange(files.Select(file => file.FileName +
+                (file.FileName == _predictionFileName ? " (active)" : "")));
+            presentation.Menu("Select Predictions File", items, "Back");
+            int? selection = ReadSelection(items.Count);
+            if (selection is null || cancellationToken.IsCancellationRequested) return false;
+            if (selection == 0) return true;
+
+            string? selectedFile = selection == 1 ? null : files[selection.Value - 2].FileName;
+            StoredPrediction prediction = store.LoadPrediction(selectedFile, presentation.Warning, fallbackToLatest: false);
+            if (cancellationToken.IsCancellationRequested) return false;
+            AppSettings settings = _settings with { SelectedPredictionFile = selectedFile };
+            store.SaveSettings(settings);
+            _settings = settings;
+            Activate(prediction);
+            presentation.Success($"Selected predictions file: {prediction.FileName}");
+        }
+        catch (Exception error) when (IsStorageError(error))
+        {
+            presentation.Error($"Could not select predictions: {error.Message}");
+            presentation.Warning("The previous predictions and configuration are still selected.");
+        }
+        return !cancellationToken.IsCancellationRequested && Pause();
+    }
+
+    private void Activate(StoredPrediction prediction)
+    {
+        _snapshot = prediction.Snapshot;
+        _predictionFileName = prediction.FileName;
     }
 
     private bool ConfigureValue(bool rho)
@@ -190,7 +238,6 @@ public sealed class ConsoleApp(
     {
         while (true)
         {
-            output.Write("Select an option: ");
             string? text = input.ReadLine()?.Trim();
             if (text is null) return null;
             if (int.TryParse(text, out int selection) && selection >= 0 && selection <= maximum) return selection;

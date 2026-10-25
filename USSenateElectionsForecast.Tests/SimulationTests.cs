@@ -183,7 +183,7 @@ public sealed class SimulationTests
 internal static class TestSnapshots
 {
     public static PredictionSnapshot Load() => JsonSerializer.Deserialize<PredictionSnapshot>(
-        File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Data", "bundled-predictions.json")), ForecastJson.Options)
+        File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Data", "polymarket_predictions_20261024.json")), ForecastJson.Options)
         ?? throw new InvalidDataException("The bundled test snapshot was empty.");
 
     public static PredictionSnapshot Certain(int democraticWins = 0, int unknownWins = 0)

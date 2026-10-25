@@ -58,41 +58,33 @@ public sealed class ConsolePresentation
     {
         _output.WriteLine();
         if (title is not null) Line(title, Gold);
+        Line("Select a Menu Option:", Gold);
         for (int index = 0; index < items.Count; index++) Line($"{index + 1}) {items[index]}", Gold);
         Line($"0) {zeroLabel}", Gold);
     }
 
-    public void Context(AppSettings settings, PredictionSnapshot? snapshot)
+    public void Context(AppSettings settings, PredictionSnapshot? snapshot, string? predictionFileName = null)
     {
         _output.WriteLine();
-        _output.WriteLine($"Simulation count: {settings.TrialCount.ToString("N0", CultureInfo.InvariantCulture)} | Rho: {settings.Rho.ToString("0.00############", CultureInfo.InvariantCulture)}");
-        Prose("Rho controls how strongly underlying race scores move together.");
-        Prose("0 means independent; higher rho means a stronger shared national swing.");
-        Prose("Default 0.12 assigns 12% of score variance to national effects, 88% to local.");
-        Prose("Past shared polling errors motivate correlation (Nate Silver/FiveThirtyEight).");
-        Prose("0.12 is our modeling assumption, not a published Silver estimate.");
+        Line("Assumptions & Configurations:", Green);
+        Line($"- Simulation count: {settings.TrialCount.ToString("N0", CultureInfo.InvariantCulture)} | Rho: {settings.Rho.ToString("0.00############", CultureInfo.InvariantCulture)}", Green);
+        Line("- Rho links race scores: 0 = independent; higher = more national swing.", Green);
+        Line("- Default 0.12: 12% national / 88% local variance; our assumption, not Silver's.", Green);
+        Line("- Shared polling errors motivate correlation (Silver/FiveThirtyEight).", Green);
         if (snapshot is null)
         {
             Warning("Predictions unavailable. Use Configure > Update Predictions from Polymarket before forecasting.");
             return;
         }
-        _output.WriteLine($"Election: {snapshot.ElectionYear} | Races: {snapshot.Races.Count} | Predictions retrieved: {Timestamp(snapshot.RetrievedAt)}");
-        _output.WriteLine("Seats not on the ballot: Democratic caucus 34 | Republican caucus 31");
-        Prose("Control: Democratic caucus needs 51 seats; Republican caucus needs 50.");
-        Prose("The Vice President breaks a 50-50 tie for the Republican caucus.");
+        if (predictionFileName is not null) Line($"- Predictions file: {predictionFileName}", Green);
+        Line($"- Election: {snapshot.ElectionYear} | Races: {snapshot.Races.Count} | Retrieved: {Timestamp(snapshot.RetrievedAt)}", Green);
+        Line("- Seats off ballot: Democratic caucus 34 | Republican caucus 31", Green);
+        Line("- Control: Democratic caucus 51+; Republican caucus 50+ (VP breaks ties).", Green);
         if (DateTimeOffset.UtcNow - snapshot.RetrievedAt > TimeSpan.FromDays(1))
             Warning("These saved predictions are over 24 hours old. Update Predictions from Polymarket to refresh them.");
     }
 
     public void Results(SimulationResult result) => Results(ProbabilityResult.FromSimulation(result));
-
-    public void MethodAgreementNote()
-    {
-        _output.WriteLine();
-        Prose("Options 2/3 and option 4's correlated result use the same model.");
-        Prose("At about 1,000,000 samples, 2/3 generally approach 4's direct calculation.");
-        Prose("Small sampling differences can remain; option 4 integrates without sampling.");
-    }
 
     public void Results(ProbabilityResult result)
     {
@@ -159,8 +151,9 @@ public sealed class ConsolePresentation
         DemocraticSeatProbabilities(result);
     }
 
-    public void Predictions(PredictionSnapshot snapshot)
+    public void Predictions(PredictionSnapshot snapshot, string? predictionFileName = null)
     {
+        if (predictionFileName is not null) _output.WriteLine($"Predictions file: {predictionFileName}");
         _output.WriteLine();
         Line("Current Race Probabilities (closest first):", Cyan);
         _output.WriteLine($"Predictions retrieved: {Timestamp(snapshot.RetrievedAt)} | Races: {snapshot.Races.Count}");

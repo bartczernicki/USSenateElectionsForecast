@@ -314,7 +314,7 @@ public sealed class PredictionTests
     }
 
     private static PredictionSnapshot LoadBundle() => JsonSerializer.Deserialize<PredictionSnapshot>(
-        File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Data", "bundled-predictions.json")), ForecastJson.Options)!;
+        File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Data", "polymarket_predictions_20261024.json")), ForecastJson.Options)!;
 
     private static JsonObject ReadFixtures() => JsonNode.Parse(File.ReadAllText(
         Path.Combine(AppContext.BaseDirectory, "Fixtures", "polymarket-events.json")))!.AsObject();

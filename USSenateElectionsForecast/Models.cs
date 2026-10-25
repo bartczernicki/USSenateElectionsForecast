@@ -4,7 +4,7 @@ public enum Caucus { Democratic, Unknown, Republican }
 
 public enum SimulationMode { Independent, Correlated }
 
-public sealed record AppSettings(double Rho = 0.12, int TrialCount = 100_000)
+public sealed record AppSettings(double Rho = 0.12, int TrialCount = 100_000, string? SelectedPredictionFile = null)
 {
     public void Validate()
     {
@@ -12,6 +12,9 @@ public sealed record AppSettings(double Rho = 0.12, int TrialCount = 100_000)
             throw new ArgumentOutOfRangeException(nameof(Rho), "Rho must be between 0.00 and 0.99.");
         if (TrialCount is < 1_000 or > 10_000_000)
             throw new ArgumentOutOfRangeException(nameof(TrialCount), "Simulation count must be between 1,000 and 10,000,000.");
+        if (SelectedPredictionFile is not null && !PredictionFileNames.TryParse(SelectedPredictionFile, out _)
+            && !PredictionFileNames.TryParseLegacy(SelectedPredictionFile, out _))
+            throw new ArgumentException("Select a polymarket_predictions_YYYYMMDD.json filename or Latest available.", nameof(SelectedPredictionFile));
     }
 }
 
@@ -39,3 +42,7 @@ public sealed record PredictionSnapshot(
     int ElectionYear,
     DateTimeOffset RetrievedAt,
     IReadOnlyList<RacePrediction> Races);
+
+public sealed record StoredPrediction(string FileName, PredictionSnapshot Snapshot);
+
+public sealed record PredictionFileOption(string FileName, DateOnly Date);
