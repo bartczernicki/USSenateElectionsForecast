@@ -99,14 +99,6 @@ Prices are market-implied inputs, not necessarily a normalized categorical distr
 
 The refresh uses at most four concurrent requests, bounded request timeouts, and limited retries for rate limits and server errors. It saves `polymarket_predictions_YYYYMMDD.json` using the retrieval date in UTC only after **all 35 races** validate. A second refresh on the same UTC date replaces that date's saved file; earlier dates remain available. A successful refresh returns selection to **Latest available**. Failed, partial, or unrecognized updates leave the previous predictions selected. No missing race receives an invented probability.
 
-Settings and refreshed predictions live in `%LOCALAPPDATA%\USSenateElectionsForecast` on Windows (`Environment.SpecialFolder.LocalApplicationData` on other platforms). Available dated snapshots are discovered in both this data directory and the application's bundled `Data` directory. Dates are sorted by filename; a valid data-directory copy takes precedence over a bundled copy for the same date. Invalid snapshots are skipped with a warning. If a remembered file is missing or invalid, the app warns and uses the latest valid snapshot without rewriting the saved setting; invalid settings fall back to defaults.
-
-Existing `predictions.json` and `polymarket_predictions.json` caches are retained and copied byte for byte to a `polymarket_predictions_YYYYMMDD.json` file based on their UTC retrieval date, unless that dated file already exists. Older `predictions_YYYYMMDD.json` files and remembered selections remain supported; data-directory files are copied to the new prefix without overwriting existing files. Saved snapshots are validated, and saves use a temporary file and atomic replacement. For a separate data directory:
-
-```powershell
-dotnet run --project USSenateElectionsForecast -- --data-dir .\my-forecast-data
-```
-
 This version uses the fixed 2026 catalog, caucus assumptions, and vice-president assumption above. Contract or affiliation changes require reviewing that catalog before accepting new outcomes.
 
 ## Build and verify
@@ -116,5 +108,3 @@ dotnet build USSenateElectionsForecast.sln -c Release
 dotnet test USSenateElectionsForecast.sln -c Release
 dotnet publish USSenateElectionsForecast/USSenateElectionsForecast.csproj -c Release -o artifacts/publish
 ```
-
-The published output includes `Data/polymarket_predictions_20261024.json` and `Data/polymarket_predictions_20261025.json` and can forecast without network access. The MSTest suite uses seeded simulations, captured Gamma fixtures, mocked HTTP, and temporary storage. Tests cover marginal probabilities, the analytic two-race Gaussian joint probability, independent aggregation against enumerated outcomes, bundled-data direct results, conditional sampling, convergence at rho 0.99, forced numerical failure, weighted percentiles, inclusive tail probabilities, seat/control totals, the tie-break and unknown-caucus cases, parsing and normalization, complete refreshes, retained caches after failures, dated-file discovery and selection, settings recovery, menu navigation, cancellation, EOF, and chart formatting. Tests do not call live services or change your saved app data.
