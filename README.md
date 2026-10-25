@@ -9,7 +9,7 @@ A .NET 10 console application that forecasts the 2026 U.S. Senate elections, inc
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
 - Predictions file: `polymarket_predictions_20261025.json` (latest bundled snapshot)
-- Election: 2026 | Races: 35 | Retrieved: 2026-10-25 14:56 UTC
+- Election: 2026 | Races: 35 | Retrieved: 2026-10-25 23:21 UTC
 - Seats off ballot: Democratic caucus 34 | Republican caucus 31
 - Control: Democratic caucus 51+; Republican caucus 50+ (Republican VP breaks ties).
 

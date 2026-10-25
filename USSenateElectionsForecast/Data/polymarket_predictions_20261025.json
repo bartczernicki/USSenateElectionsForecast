@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "electionYear": 2026,
-  "retrievedAt": "2026-10-25T14:56:34.9862624+00:00",
+  "retrievedAt": "2026-10-25T23:21:03.2221438+00:00",
   "races": [
     {
       "state": "Alabama",
       "eventSlug": "alabama-senate-election-winner-154",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630627",
@@ -16,7 +16,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.0125,
           "probability": 0.012487512487512486,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630628",
@@ -25,7 +25,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.9885,
           "probability": 0.9875124875124874,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         }
       ]
     },
@@ -33,16 +33,16 @@
       "state": "Alaska",
       "eventSlug": "alaska-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "634974",
           "marketSlug": "will-dan-sullivan-win-the-alaska-senate-race-in-2026",
           "label": "Sen. Dan Sullivan",
           "caucus": "Republican",
-          "rawYesPrice": 0.25,
-          "probability": 0.2481389578163772,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.255,
+          "probability": 0.2543640897755612,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "634975",
@@ -50,17 +50,17 @@
           "label": "Ann Diener",
           "caucus": "Unknown",
           "rawYesPrice": 0.0005,
-          "probability": 0.0004962779156327545,
-          "updatedAt": "2026-10-25T14:44:38.701593+00:00"
+          "probability": 0.0004987531172069827,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "634976",
           "marketSlug": "will-mary-peltola-win-the-alaska-senate-race-in-2026",
           "label": "Mary Peltola",
           "caucus": "Democratic",
-          "rawYesPrice": 0.755,
-          "probability": 0.7493796526054591,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.745,
+          "probability": 0.7431421446384042,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "634977",
@@ -68,8 +68,8 @@
           "label": "Dustin Darden",
           "caucus": "Republican",
           "rawYesPrice": 0.0005,
-          "probability": 0.0004962779156327545,
-          "updatedAt": "2026-10-25T14:36:37.656458+00:00"
+          "probability": 0.0004987531172069827,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "634978",
@@ -77,8 +77,8 @@
           "label": "Richard Grayson",
           "caucus": "Unknown",
           "rawYesPrice": 0.0005,
-          "probability": 0.0004962779156327545,
-          "updatedAt": "2026-10-25T14:36:37.656458+00:00"
+          "probability": 0.0004987531172069827,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "634979",
@@ -86,8 +86,8 @@
           "label": "Daniel J. Sullivan Jr.",
           "caucus": "Unknown",
           "rawYesPrice": 0.0005,
-          "probability": 0.0004962779156327545,
-          "updatedAt": "2026-10-25T14:36:37.656458+00:00"
+          "probability": 0.0004987531172069827,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "634980",
@@ -95,8 +95,8 @@
           "label": "David Leslie",
           "caucus": "Democratic",
           "rawYesPrice": 0.0005,
-          "probability": 0.0004962779156327545,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "probability": 0.0004987531172069827,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -104,25 +104,25 @@
       "state": "Arkansas",
       "eventSlug": "arkansas-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630653",
           "marketSlug": "will-the-democrats-win-the-arkansas-senate-race-in-2026",
           "label": "Hallie Shoffner (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.047,
-          "probability": 0.04718875502008032,
-          "updatedAt": "2026-10-25T14:44:38.701593+00:00"
+          "rawYesPrice": 0.0465,
+          "probability": 0.046430354468297554,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630654",
           "marketSlug": "will-the-republicans-win-the-arkansas-senate-race-in-2026",
           "label": "Tom Cotton (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.949,
-          "probability": 0.9528112449799196,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.955,
+          "probability": 0.9535696455317023,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -130,16 +130,16 @@
       "state": "Colorado",
       "eventSlug": "colorado-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630666",
           "marketSlug": "will-the-democrats-win-the-colorado-senate-race-in-2026",
           "label": "John Hickenlooper (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9895,
-          "probability": 0.9899949974987494,
-          "updatedAt": "2026-10-25T14:30:38.15166+00:00"
+          "rawYesPrice": 0.9885,
+          "probability": 0.9899849774661993,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630667",
@@ -147,8 +147,8 @@
           "label": "Mark Baisley (R)",
           "caucus": "Republican",
           "rawYesPrice": 0.01,
-          "probability": 0.010005002501250625,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "probability": 0.0100150225338007,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -156,25 +156,25 @@
       "state": "Delaware",
       "eventSlug": "delaware-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630679",
           "marketSlug": "will-the-democrats-win-the-delaware-senate-race-in-2026",
           "label": "Democrat",
           "caucus": "Democratic",
-          "rawYesPrice": 0.97,
-          "probability": 0.9738955823293173,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "rawYesPrice": 0.971,
+          "probability": 0.969061876247505,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         },
         {
           "marketId": "630680",
           "marketSlug": "will-the-republicans-win-the-delaware-senate-race-in-2026",
           "label": "Republican",
           "caucus": "Republican",
-          "rawYesPrice": 0.026,
-          "probability": 0.02610441767068273,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.031,
+          "probability": 0.03093812375249501,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         }
       ]
     },
@@ -182,7 +182,7 @@
       "state": "Florida",
       "eventSlug": "florida-senate-election-winner",
       "isSpecial": true,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "631044",
@@ -191,7 +191,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.085,
           "probability": 0.085,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "631045",
@@ -200,7 +200,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.915,
           "probability": 0.915,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -208,25 +208,25 @@
       "state": "Georgia",
       "eventSlug": "georgia-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630692",
           "marketSlug": "will-the-democrats-win-the-georgia-senate-race-in-2026",
           "label": "Jon Ossoff (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9565,
-          "probability": 0.9565,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.959,
+          "probability": 0.9623682890115404,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630693",
           "marketSlug": "will-the-republicans-win-the-georgia-senate-race-in-2026",
           "label": "Mike Collins (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.0435,
-          "probability": 0.0435,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.0375,
+          "probability": 0.03763171098845961,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -234,7 +234,7 @@
       "state": "Idaho",
       "eventSlug": "idaho-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630705",
@@ -242,26 +242,26 @@
           "label": "Democrat",
           "caucus": "Democratic",
           "rawYesPrice": 0.0005,
-          "probability": 0.0005073566717402335,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "probability": 0.0005047955577990914,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630706",
           "marketSlug": "will-the-republicans-win-the-idaho-senate-race-in-2026",
           "label": "Jim Risch (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.9535,
-          "probability": 0.9675291730086252,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.9545,
+          "probability": 0.9636547198384655,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630707",
           "marketSlug": "will-person-a-win-the-idaho-senate-race-in-2026",
           "label": "Todd Achilles (I)",
           "caucus": "Unknown",
-          "rawYesPrice": 0.0315,
-          "probability": 0.03196347031963471,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.0355,
+          "probability": 0.035840484603735484,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -269,25 +269,25 @@
       "state": "Illinois",
       "eventSlug": "illinois-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:46:50.860577+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630720",
           "marketSlug": "will-the-democrats-win-the-illinois-senate-race-in-2026",
           "label": "Juliana Stratton (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9825,
-          "probability": 0.9825,
-          "updatedAt": "2026-10-25T14:42:37.825308+00:00"
+          "rawYesPrice": 0.9805,
+          "probability": 0.9809904952476238,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         },
         {
           "marketId": "630721",
           "marketSlug": "will-the-republicans-win-the-illinois-senate-race-in-2026",
           "label": "Don Tracy (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.0175,
-          "probability": 0.0175,
-          "updatedAt": "2026-10-25T14:44:38.701593+00:00"
+          "rawYesPrice": 0.019,
+          "probability": 0.019009504752376186,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -295,7 +295,7 @@
       "state": "Iowa",
       "eventSlug": "iowa-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630733",
@@ -303,17 +303,17 @@
           "label": "Josh Turek (D)",
           "caucus": "Democratic",
           "rawYesPrice": 0.415,
-          "probability": 0.4170854271356784,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "probability": 0.42131979695431476,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630734",
           "marketSlug": "will-the-republicans-win-the-iowa-senate-race-in-2026",
           "label": "Ashley Hinson (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.58,
-          "probability": 0.5829145728643217,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.57,
+          "probability": 0.5786802030456853,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -321,25 +321,25 @@
       "state": "Kansas",
       "eventSlug": "kansas-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630746",
           "marketSlug": "will-the-democrats-win-the-kansas-senate-race-in-2026",
           "label": "Adam Hamilton (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.375,
-          "probability": 0.375,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.385,
+          "probability": 0.385,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630747",
           "marketSlug": "will-the-republicans-win-the-kansas-senate-race-in-2026",
           "label": "Roger Marshall (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.625,
-          "probability": 0.625,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.615,
+          "probability": 0.615,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -347,7 +347,7 @@
       "state": "Kentucky",
       "eventSlug": "kentucky-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630759",
@@ -356,7 +356,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.024,
           "probability": 0.023988005997001502,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630760",
@@ -365,7 +365,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.9765,
           "probability": 0.9760119940029985,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         }
       ]
     },
@@ -373,7 +373,7 @@
       "state": "Louisiana",
       "eventSlug": "louisiana-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "634878",
@@ -382,7 +382,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.08,
           "probability": 0.07960199004975124,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "634879",
@@ -391,7 +391,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.925,
           "probability": 0.9203980099502487,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -399,25 +399,25 @@
       "state": "Maine",
       "eventSlug": "maine-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630772",
           "marketSlug": "will-the-democrats-win-the-maine-senate-race-in-2026",
           "label": "Troy Jackson (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.635,
-          "probability": 0.6414141414141414,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.63,
+          "probability": 0.6268656716417911,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630773",
           "marketSlug": "will-the-republicans-win-the-maine-senate-race-in-2026",
           "label": "Susan Collins (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.355,
-          "probability": 0.35858585858585856,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.375,
+          "probability": 0.373134328358209,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -425,25 +425,25 @@
       "state": "Massachusetts",
       "eventSlug": "massachusetts-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630790",
           "marketSlug": "will-the-democrats-win-the-massachusetts-senate-race-in-2026",
           "label": "Ed Markey (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.984,
-          "probability": 0.9854782173259891,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.9835,
+          "probability": 0.9849774661992989,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630791",
           "marketSlug": "will-the-republicans-win-the-massachusetts-senate-race-in-2026",
           "label": "John Deaton (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.0145,
-          "probability": 0.014521782674011018,
-          "updatedAt": "2026-10-25T14:46:37.931596+00:00"
+          "rawYesPrice": 0.015,
+          "probability": 0.01502253380070105,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -451,25 +451,25 @@
       "state": "Michigan",
       "eventSlug": "michigan-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630805",
           "marketSlug": "will-the-democrats-win-the-michigan-senate-race-in-2026",
           "label": "Abdul El-Sayed (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.72,
-          "probability": 0.7164179104477613,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.71,
+          "probability": 0.7029702970297029,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630806",
           "marketSlug": "will-the-republicans-win-the-michigan-senate-race-in-2026",
           "label": "Mike Rogers (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.285,
-          "probability": 0.2835820895522388,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.3,
+          "probability": 0.297029702970297,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -477,16 +477,16 @@
       "state": "Minnesota",
       "eventSlug": "minnesota-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630818",
           "marketSlug": "will-the-democrats-win-the-minnesota-senate-race-in-2026",
           "label": "Peggy Flanagan (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.855,
-          "probability": 0.855,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.86,
+          "probability": 0.855721393034826,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630819",
@@ -494,8 +494,8 @@
           "label": "Michele Tafoya (R)",
           "caucus": "Republican",
           "rawYesPrice": 0.145,
-          "probability": 0.145,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "probability": 0.14427860696517414,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -503,7 +503,7 @@
       "state": "Mississippi",
       "eventSlug": "mississippi-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "631017",
@@ -512,7 +512,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.125,
           "probability": 0.125,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         },
         {
           "marketId": "631018",
@@ -521,7 +521,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.875,
           "probability": 0.875,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         }
       ]
     },
@@ -529,7 +529,7 @@
       "state": "Montana",
       "eventSlug": "montana-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630831",
@@ -538,7 +538,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.0015,
           "probability": 0.0015067805123053742,
-          "updatedAt": "2026-10-25T14:46:37.931596+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630832",
@@ -547,7 +547,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.92,
           "probability": 0.9241587142139629,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630833",
@@ -556,7 +556,7 @@
           "caucus": "Unknown",
           "rawYesPrice": 0.074,
           "probability": 0.0743345052737318,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -564,7 +564,7 @@
       "state": "Nebraska",
       "eventSlug": "nebraska-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "634891",
@@ -572,26 +572,26 @@
           "label": "Democrat",
           "caucus": "Democratic",
           "rawYesPrice": 0.0005,
-          "probability": 0.0005047955577990914,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "probability": 0.0004972650422675286,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "634892",
           "marketSlug": "will-the-republicans-win-the-nebraska-senate-race-in-2026",
           "label": "Pete Ricketts (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.745,
-          "probability": 0.7521453811206462,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.74,
+          "probability": 0.7359522625559423,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "634893",
           "marketSlug": "will-an-independent-win-the-nebraska-senate-race-in-2026",
           "label": "Independent",
           "caucus": "Unknown",
-          "rawYesPrice": 0.245,
-          "probability": 0.24734982332155478,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.265,
+          "probability": 0.26355047240179014,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -599,7 +599,7 @@
       "state": "New Hampshire",
       "eventSlug": "new-hampshire-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630844",
@@ -608,7 +608,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.915,
           "probability": 0.915,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630845",
@@ -617,7 +617,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.085,
           "probability": 0.085,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -625,16 +625,16 @@
       "state": "New Jersey",
       "eventSlug": "new-jersey-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:44:50.742308+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630857",
           "marketSlug": "will-the-democrats-win-the-new-jersey-senate-race-in-2026",
           "label": "Cory Booker (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9845,
-          "probability": 0.9840079960019991,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.984,
+          "probability": 0.984,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630858",
@@ -642,8 +642,8 @@
           "label": "Justin Murphy (R)",
           "caucus": "Republican",
           "rawYesPrice": 0.016,
-          "probability": 0.015992003998001002,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "probability": 0.016,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -651,25 +651,25 @@
       "state": "New Mexico",
       "eventSlug": "new-mexico-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630870",
           "marketSlug": "will-the-democrats-win-the-new-mexico-senate-race-in-2026",
           "label": "Ben Ray Luj\u00E1n (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.973,
-          "probability": 0.9734867433716858,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.97,
+          "probability": 0.9738955823293173,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630871",
           "marketSlug": "will-the-republicans-win-the-new-mexico-senate-race-in-2026",
           "label": "Larry Marker (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.0265,
-          "probability": 0.026513256628314157,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.026,
+          "probability": 0.02610441767068273,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -677,25 +677,25 @@
       "state": "North Carolina",
       "eventSlug": "north-carolina-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630883",
           "marketSlug": "will-the-democrats-win-the-north-carolina-senate-race-in-2026",
           "label": "Roy Cooper (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9685,
-          "probability": 0.9675324675324675,
-          "updatedAt": "2026-10-25T14:46:37.931596+00:00"
+          "rawYesPrice": 0.9765,
+          "probability": 0.974064837905237,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630884",
           "marketSlug": "will-the-republicans-win-the-north-carolina-senate-race-in-2026",
           "label": "Michael Whatley (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.0325,
-          "probability": 0.032467532467532464,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.026,
+          "probability": 0.02593516209476309,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -703,7 +703,7 @@
       "state": "Ohio",
       "eventSlug": "ohio-senate-election-winner",
       "isSpecial": true,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "631057",
@@ -711,17 +711,17 @@
           "label": "Sherrod Brown (D)",
           "caucus": "Democratic",
           "rawYesPrice": 0.665,
-          "probability": 0.665,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "probability": 0.6683417085427136,
+          "updatedAt": "2026-10-25T23:17:46.675978+00:00"
         },
         {
           "marketId": "631058",
           "marketSlug": "will-the-republicans-win-the-ohio-senate-race-in-2026",
           "label": "Jon Husted (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.335,
-          "probability": 0.335,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.33,
+          "probability": 0.3316582914572864,
+          "updatedAt": "2026-10-25T23:17:48.201534+00:00"
         }
       ]
     },
@@ -729,25 +729,25 @@
       "state": "Oklahoma",
       "eventSlug": "oklahoma-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "631030",
           "marketSlug": "will-the-democrats-win-the-oklahoma-senate-race-in-2026",
           "label": "N\u2019Kiyla \u201CJasmine\u201D Thomas (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.02,
-          "probability": 0.019950124688279305,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.022,
+          "probability": 0.02203304957436154,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "631031",
           "marketSlug": "will-the-republicans-win-the-oklahoma-senate-race-in-2026",
           "label": "Kevin Hern (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.9825,
-          "probability": 0.9800498753117208,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.9765,
+          "probability": 0.9779669504256384,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         }
       ]
     },
@@ -755,25 +755,25 @@
       "state": "Oregon",
       "eventSlug": "oregon-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630898",
           "marketSlug": "will-the-democrats-win-the-oregon-senate-race-in-2026",
           "label": "Jeff Merkley (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9865,
-          "probability": 0.9889724310776943,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "rawYesPrice": 0.987,
+          "probability": 0.9909638554216867,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         },
         {
           "marketId": "630899",
           "marketSlug": "will-the-republicans-win-the-oregon-senate-race-in-2026",
           "label": "David Brock Smith (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.011,
-          "probability": 0.011027568922305763,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "rawYesPrice": 0.009,
+          "probability": 0.009036144578313253,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -781,16 +781,16 @@
       "state": "Rhode Island",
       "eventSlug": "rhode-island-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:48:50.623381+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630911",
           "marketSlug": "will-the-democrats-win-the-rhode-island-senate-race-in-2026",
           "label": "Jack Reed (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.978,
-          "probability": 0.9834087481146305,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.977,
+          "probability": 0.9833920483140413,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630912",
@@ -798,8 +798,8 @@
           "label": "Raymond McKay (R)",
           "caucus": "Republican",
           "rawYesPrice": 0.0165,
-          "probability": 0.016591251885369536,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "probability": 0.016607951685958734,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -807,16 +807,16 @@
       "state": "South Carolina",
       "eventSlug": "south-carolina-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630924",
           "marketSlug": "will-the-democrats-win-the-south-carolina-senate-race-in-2026",
           "label": "Annie Andrews (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.2,
-          "probability": 0.1990049751243781,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.185,
+          "probability": 0.18686868686868688,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630925",
@@ -824,8 +824,8 @@
           "label": "Darline Graham Nordone (R)",
           "caucus": "Republican",
           "rawYesPrice": 0.805,
-          "probability": 0.8009950248756218,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "probability": 0.8131313131313131,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -833,7 +833,7 @@
       "state": "South Dakota",
       "eventSlug": "south-dakota-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630937",
@@ -841,26 +841,26 @@
           "label": "Democrat",
           "caucus": "Democratic",
           "rawYesPrice": 0.0015,
-          "probability": 0.0015015015015015017,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "probability": 0.0015037593984962407,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         },
         {
           "marketId": "630938",
           "marketSlug": "will-the-republicans-win-the-south-dakota-senate-race-in-2026",
           "label": "Mike Rounds (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.953,
-          "probability": 0.953953953953954,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.951,
+          "probability": 0.9533834586466166,
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630939",
           "marketSlug": "will-person-a-win-the-south-dakota-senate-race-in-2026",
           "label": "Brian Bengs (I)",
           "caucus": "Unknown",
-          "rawYesPrice": 0.0445,
-          "probability": 0.04454454454454455,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "rawYesPrice": 0.045,
+          "probability": 0.045112781954887216,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         }
       ]
     },
@@ -868,7 +868,7 @@
       "state": "Tennessee",
       "eventSlug": "tennessee-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:14:48.060708+00:00",
       "outcomes": [
         {
           "marketId": "630950",
@@ -877,7 +877,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.04,
           "probability": 0.03996003996003997,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         },
         {
           "marketId": "630951",
@@ -886,7 +886,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.961,
           "probability": 0.9600399600399601,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:14:37.271275+00:00"
         }
       ]
     },
@@ -894,25 +894,25 @@
       "state": "Texas",
       "eventSlug": "texas-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:52:52.178575+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630963",
           "marketSlug": "will-the-democrats-win-the-texas-senate-race-in-2026",
           "label": "James Talarico (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.635,
-          "probability": 0.635,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.625,
+          "probability": 0.625,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630964",
           "marketSlug": "will-the-republicans-win-the-texas-senate-race-in-2026",
           "label": "Ken Paxton (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.365,
-          "probability": 0.365,
-          "updatedAt": "2026-10-25T14:52:38.774444+00:00"
+          "rawYesPrice": 0.375,
+          "probability": 0.375,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -920,25 +920,25 @@
       "state": "Virginia",
       "eventSlug": "virginia-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630976",
           "marketSlug": "will-the-democrats-win-the-virginia-senate-race-in-2026",
           "label": "Mark Warner (D)",
           "caucus": "Democratic",
-          "rawYesPrice": 0.983,
-          "probability": 0.983,
-          "updatedAt": "2026-10-25T14:30:38.15166+00:00"
+          "rawYesPrice": 0.9835,
+          "probability": 0.9835,
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         },
         {
           "marketId": "630977",
           "marketSlug": "will-the-republicans-win-the-virginia-senate-race-in-2026",
           "label": "Bert Mizusawa (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.017,
-          "probability": 0.017,
-          "updatedAt": "2026-10-25T14:40:37.940915+00:00"
+          "rawYesPrice": 0.0165,
+          "probability": 0.0165,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         }
       ]
     },
@@ -946,7 +946,7 @@
       "state": "West Virginia",
       "eventSlug": "west-virginia-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "630989",
@@ -955,7 +955,7 @@
           "caucus": "Democratic",
           "rawYesPrice": 0.017,
           "probability": 0.016991504247876064,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         },
         {
           "marketId": "630990",
@@ -964,7 +964,7 @@
           "caucus": "Republican",
           "rawYesPrice": 0.9835,
           "probability": 0.983008495752124,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "updatedAt": "2026-10-25T23:16:37.122119+00:00"
         }
       ]
     },
@@ -972,7 +972,7 @@
       "state": "Wyoming",
       "eventSlug": "wyoming-senate-election-winner",
       "isSpecial": false,
-      "sourceUpdatedAt": "2026-10-25T14:50:50.671261+00:00",
+      "sourceUpdatedAt": "2026-10-25T23:16:48.213938+00:00",
       "outcomes": [
         {
           "marketId": "631002",
@@ -980,17 +980,17 @@
           "label": "James W. Byrd (D)",
           "caucus": "Democratic",
           "rawYesPrice": 0.013,
-          "probability": 0.013,
-          "updatedAt": "2026-10-25T14:50:37.896761+00:00"
+          "probability": 0.013039117352056168,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         },
         {
           "marketId": "631003",
           "marketSlug": "will-the-republicans-win-the-wyoming-senate-race-in-2026",
           "label": "Harriet Hageman (R)",
           "caucus": "Republican",
-          "rawYesPrice": 0.987,
-          "probability": 0.987,
-          "updatedAt": "2026-10-25T14:48:38.70687+00:00"
+          "rawYesPrice": 0.984,
+          "probability": 0.9869608826479438,
+          "updatedAt": "2026-10-25T23:18:36.542511+00:00"
         }
       ]
     }
