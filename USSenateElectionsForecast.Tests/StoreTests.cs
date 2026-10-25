@@ -6,20 +6,26 @@ namespace USSenateElectionsForecast.Tests;
 [TestClass]
 public sealed class StoreTests
 {
+    private string testDirectory = null!;
     private string directory = null!;
     private ForecastStore store = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        directory = Path.Combine(Path.GetTempPath(), "SenateForecastTests", Guid.NewGuid().ToString("N"));
-        store = new ForecastStore(directory, Path.Combine(AppContext.BaseDirectory, "Data"));
+        testDirectory = Path.Combine(Path.GetTempPath(), "SenateForecastTests", Guid.NewGuid().ToString("N"));
+        directory = Path.Combine(testDirectory, "saved");
+        string bundled = Path.Combine(testDirectory, "bundled");
+        Directory.CreateDirectory(bundled);
+        const string fixtureFile = "polymarket_predictions_20261024.json";
+        File.Copy(Path.Combine(AppContext.BaseDirectory, "Data", fixtureFile), Path.Combine(bundled, fixtureFile));
+        store = new ForecastStore(directory, bundled);
     }
 
     [TestCleanup]
     public void Cleanup()
     {
-        if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true);
+        if (Directory.Exists(testDirectory)) Directory.Delete(testDirectory, recursive: true);
     }
 
     [TestMethod]

@@ -10,7 +10,7 @@ Install the .NET 10 SDK, then run from this directory:
 dotnet run --project USSenateElectionsForecast
 ```
 
-The application works offline immediately using `polymarket_predictions_20261024.json`, a real Polymarket snapshot captured on **October 24, 2026 at 21:15:35 UTC (5:15 p.m. Eastern)**. The active filename appears in the menus alongside its retrieval time; results also identify the retrieval time. No predictions are downloaded automatically. Select **Configure > Update Predictions from Polymarket** to retrieve current prices. No account, wallet, or API key is required.
+The application works offline immediately with snapshots for October 24 and 25, 2026. **Latest available** defaults to `polymarket_predictions_20261025.json`, captured on **October 25, 2026 at 14:56:34 UTC (10:56 a.m. Eastern)**. The October 24 snapshot remains selectable. The active filename appears in the menus alongside its retrieval time; results also identify the retrieval time. No predictions are downloaded automatically. Select **Configure > Update Predictions from Polymarket** to retrieve current prices. No account, wallet, or API key is required.
 
 ```text
 1) Independent Monte Carlo Simulation
@@ -80,7 +80,7 @@ If integration reaches its limit without convergence, the app explains the numer
 
 Control probabilities follow from the marginal distributions: `P(D >= 51)`, `P(R >= 50)`, and `1 - P(D >= 51) - P(R >= 50)` for uncertain control. The two control events are disjoint under the existing rules, so these calculations do not require a joint seat distribution.
 
-For the bundled snapshot, direct calculation gives:
+For the October 24 snapshot, direct calculation gives:
 
 | Model | Democratic control | Republican control | Uncertain control |
 |---|---:|---:|---:|
@@ -117,4 +117,4 @@ dotnet test USSenateElectionsForecast.sln -c Release
 dotnet publish USSenateElectionsForecast/USSenateElectionsForecast.csproj -c Release -o artifacts/publish
 ```
 
-The published output includes `Data/polymarket_predictions_20261024.json` and can forecast without network access. The MSTest suite uses seeded simulations, captured Gamma fixtures, mocked HTTP, and temporary storage. Tests cover marginal probabilities, the analytic two-race Gaussian joint probability, independent aggregation against enumerated outcomes, bundled-data direct results, conditional sampling, convergence at rho 0.99, forced numerical failure, weighted percentiles, inclusive tail probabilities, seat/control totals, the tie-break and unknown-caucus cases, parsing and normalization, complete refreshes, retained caches after failures, dated-file discovery and selection, settings recovery, menu navigation, cancellation, EOF, and chart formatting. Tests do not call live services or change your saved app data.
+The published output includes `Data/polymarket_predictions_20261024.json` and `Data/polymarket_predictions_20261025.json` and can forecast without network access. The MSTest suite uses seeded simulations, captured Gamma fixtures, mocked HTTP, and temporary storage. Tests cover marginal probabilities, the analytic two-race Gaussian joint probability, independent aggregation against enumerated outcomes, bundled-data direct results, conditional sampling, convergence at rho 0.99, forced numerical failure, weighted percentiles, inclusive tail probabilities, seat/control totals, the tie-break and unknown-caucus cases, parsing and normalization, complete refreshes, retained caches after failures, dated-file discovery and selection, settings recovery, menu navigation, cancellation, EOF, and chart formatting. Tests do not call live services or change your saved app data.

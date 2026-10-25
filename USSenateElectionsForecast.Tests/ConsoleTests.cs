@@ -499,8 +499,14 @@ public sealed class ConsoleTests
             _http = new HttpClient(handler ?? new FailedRequestHandler());
             _probabilityEngine = probabilityEngine ?? new ProbabilityCalculationEngine();
             _output = writer ?? new StringWriter(CultureInfo.InvariantCulture);
-            Store = new ForecastStore(_directory, noSnapshot ? Path.Combine(_directory, "missing")
-                : Path.Combine(AppContext.BaseDirectory, "Data"));
+            string bundled = Path.Combine(_directory, "bundled");
+            if (!noSnapshot)
+            {
+                Directory.CreateDirectory(bundled);
+                const string fixtureFile = "polymarket_predictions_20261024.json";
+                File.Copy(Path.Combine(AppContext.BaseDirectory, "Data", fixtureFile), Path.Combine(bundled, fixtureFile));
+            }
+            Store = new ForecastStore(_directory, bundled);
             if (!noSnapshot) Store.SaveSnapshot(TestSnapshots.Load());
         }
 
