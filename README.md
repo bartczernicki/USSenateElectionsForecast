@@ -8,8 +8,8 @@ A .NET 10 console application that forecasts the 2026 U.S. Senate elections, inc
 - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
-- Predictions file: `polymarket_predictions_20261025.json` (latest bundled snapshot)
-- Election: 2026 | Races: 35 | Retrieved: 2026-10-25 23:21 UTC
+- Predictions file: `polymarket_predictions_20261026.json` (latest bundled snapshot)
+- Election: 2026 | Races: 35 | Retrieved: 2026-10-26 20:44 UTC
 - Seats off ballot: Democratic caucus 34 | Republican caucus 31
 - Control: Democratic caucus 51+; Republican caucus 50+ (Republican VP breaks ties).
 
@@ -48,7 +48,7 @@ The correlated results in options 2, 3, and 4 use the same model. More samples r
 
 ## Prediction data and refreshes
 
-- Bundled snapshots for October 24 and 25, 2026 work offline. The active filename and retrieval time appear in the menus.
+- Bundled snapshots for October 24–26, 2026 work offline. The active filename and retrieval time appear in the menus.
 - [Polymarket's public Gamma API](https://docs.polymarket.com/market-data/discover-markets) supplies market-implied prices. Each race's mutually exclusive Yes prices are divided by their total to produce probabilities that sum to one.
 - Refreshes save a new snapshot only after all 35 races validate. Failed, partial, or unrecognized updates leave the previous predictions selected.
 - Files use `polymarket_predictions_YYYYMMDD.json`, dated in UTC. Another refresh on the same UTC date replaces that day's file; earlier dates remain available.
