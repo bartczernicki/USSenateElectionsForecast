@@ -1,14 +1,19 @@
 # US Senate Elections Forecast
 
-A .NET 10 console application that forecasts the 2026 U.S. Senate elections, including the Florida and Ohio special elections, using Polymarket prices.
+## What is this & Why might it be interesting?
+
+- A .NET 10 console application that forecasts the 2026 U.S. Senate elections using quantitative Monte Carlo techniques with Polymarket predictions.
+- Polymarket predictions (especially when the forecast is coming to resolution) is highly calibrated, which makes individual predictions effective intelligence points for forecasts.
+- Monte Carlo techniques can compile a statistical distributions that can include sophisticated correlations ("Democratic Wave in 2026")
+- Why? When you are making a forecasting decision and you have the ability to get the intelligence (data), ability and time to do the math. You should proceed. This will make forecasting decisions explainable, reproducable and thus more accurate.
 
 ## Assumptions & Configurations
 
 <<<<<<< HEAD
 - Simulation count: 100,000 default | Rho: 0.12
 - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
-- Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
+- Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
 - Predictions file: `polymarket_predictions_20261026.json` (latest bundled snapshot)
 - Election: 2026 | Races: 35 | Retrieved: 2026-10-26 20:44 UTC
 =======
