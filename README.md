@@ -2,10 +2,11 @@
 
 ## What is this & Why might it be interesting?
 
-- A .NET 10 console application that forecasts the 2026 U.S. Senate elections using quantitative Monte Carlo techniques with Polymarket predictions.
+- A .NET 10 console application that forecasts the 2026 U.S. Senate elections using [Polymarket](https://polymarket.com/) probabilities, Monte Carlo simulations, and direct probability calculations.
 - Polymarket predictions (especially when the forecast is coming to resolution) is highly calibrated, which makes individual predictions effective intelligence points for forecasts.
-- Monte Carlo techniques can compile a statistical distributions that can include sophisticated correlations ("Democratic Wave in 2026")
-- Why? When you are making a forecasting decision and you have the ability to get the intelligence (data), ability and time to do the math. You should proceed. This will make forecasting decisions explainable, reproducable and thus more accurate.
+- **Model wave elections:** a shared national factor lets races move together, capturing scenarios such as a Democratic or Republican wave.
+- **The average doesn’t tell the whole story:** correlation preserves individual Senate race probabilities and expected seat totals while changing the likelihood of unusually large gains or losses.
+- **Why do the math?** When the data and tools are available, you make the forecast decisions explainable, reproducable and generally more accurate.
 
 ## Assumptions & Configurations
 
