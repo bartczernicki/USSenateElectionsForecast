@@ -15,16 +15,6 @@
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
 - Predictions file: `polymarket_predictions_20261026.json` (latest bundled snapshot)
 - Election: 2026 | Races: 35 | Retrieved: 2026-10-26 20:44 UTC
-=======
-- Configureable Simulation count: 100,000 | Rho: 0.12 (defaults)
-  - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
-  - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
-  - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
-- Polymarket Downloaded Predictions files: `polymarket_predictions_20261025.json` (latest downloaded snapshot)
-- Election: 2026 | Races: 35 | Retrieved: 2026-10-25 23:21 UTC
->>>>>>> 11b19fa5f865ba5267429b5d4bad4b8fe4dabe20
-- Seats off ballot: Democratic caucus 34 | Republican caucus 31
-- Control: Democratic caucus 51+; Republican caucus 50+ (Republican VP breaks ties).
 
 ## Run and configure
 
