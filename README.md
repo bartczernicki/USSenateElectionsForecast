@@ -4,12 +4,21 @@ A .NET 10 console application that forecasts the 2026 U.S. Senate elections, inc
 
 ## Assumptions & Configurations
 
+<<<<<<< HEAD
 - Simulation count: 100,000 default | Rho: 0.12
 - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
 - Predictions file: `polymarket_predictions_20261026.json` (latest bundled snapshot)
 - Election: 2026 | Races: 35 | Retrieved: 2026-10-26 20:44 UTC
+=======
+- Configureable Simulation count: 100,000 | Rho: 0.12 (defaults)
+  - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
+  - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
+  - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
+- Polymarket Downloaded Predictions files: `polymarket_predictions_20261025.json` (latest downloaded snapshot)
+- Election: 2026 | Races: 35 | Retrieved: 2026-10-25 23:21 UTC
+>>>>>>> 11b19fa5f865ba5267429b5d4bad4b8fe4dabe20
 - Seats off ballot: Democratic caucus 34 | Republican caucus 31
 - Control: Democratic caucus 51+; Republican caucus 50+ (Republican VP breaks ties).
 
@@ -25,9 +34,10 @@ Choose a numbered calculation method or **5) Configure**. Use `0` to go back or 
 
 Under **Configure**:
 
-- **Configure Rho (Correlation)** / **Configure Simulation Count**: set rho from 0 through 0.99 using a decimal point, or a whole-number count from 1,000 through 10,000,000. Blank input keeps the current value; saved settings persist across restarts.
+- **Configure Rho (Correlation)**: set rho from 0 through 0.99 using a decimal point. Blank input keeps the current value; saved settings persist across restarts. What is Rho? Rho is a proxy for the "Democratic Wave". The US Senate elections are independent state elections, but in the overall environment in the country, there is some correlation between the races. This number represents how correlated they are. What is super interesting is that it doesn't change the expected outcome (average), but it expands the tails of the distribution. More extreme events (upsets) happen. 
+- **Configure Simulation Count**: a whole-number count from 1,000 through 10,000,000. Blank input keeps the current value; saved settings persist across restarts.
 - **Select Predictions File**: choose a dated snapshot or **Latest available**, which selects the newest valid snapshot. A specific selection persists across restarts until changed or a successful refresh returns selection to **Latest available**. Selecting a file uses saved data without downloading anything.
-- **List Current US Senate Polymarket Probabilities**: view the selected snapshot, with the closest races first. Closeness is the gap between a race's two highest normalized outcome probabilities.
+- **List Current US Senate Polymarket Probabilities**: view the selected snapshot, sorthed by the closest races first. Closeness is the gap between a race's two highest normalized outcome probabilities.
 - **Update Predictions from Polymarket**: manually fetch current prices. No account, wallet, or API key is required. Downloads never happen automatically.
 
 ## Calculation methods
