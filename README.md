@@ -9,7 +9,6 @@
 
 ## Assumptions & Configurations
 
-<<<<<<< HEAD
 - Simulation count: 100,000 default | Rho: 0.12
 - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
