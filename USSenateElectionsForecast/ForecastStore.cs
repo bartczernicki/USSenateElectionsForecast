@@ -28,7 +28,7 @@ public sealed class ForecastStore(string dataDirectory, string bundledDataDirect
     public string GetSnapshotPath(string fileName)
     {
         if (!PredictionFileNames.TryParse(fileName, out _))
-            throw new ArgumentException("Prediction files must be named polymarket_predictions_YYYYMMDD.json.", nameof(fileName));
+            throw new ArgumentException("Prediction files must be named polymarket_predictions_YYYYMMDD.json or kalshi_predictions_YYYYMMDD.json.", nameof(fileName));
         return Path.Combine(DataDirectory, fileName);
     }
 
@@ -48,21 +48,27 @@ public sealed class ForecastStore(string dataDirectory, string bundledDataDirect
         }
     }
 
-    public IReadOnlyList<PredictionFileOption> ListSnapshots(Action<string>? warn = null) =>
-        FindSnapshots(warn).Select(x => new PredictionFileOption(x.FileName, PredictionFileNames.Date(x.FileName))).ToArray();
+    public IReadOnlyList<PredictionFileOption> ListSnapshots(Action<string>? warn = null,
+        PredictionSource source = PredictionSource.Polymarket) =>
+        FindSnapshots(warn, source).Select(x => new PredictionFileOption(x.FileName, PredictionFileNames.Date(x.FileName))).ToArray();
 
-    public PredictionSnapshot LoadSnapshot(Action<string>? warn = null) => LoadPrediction(warn: warn).Snapshot;
+    public PredictionSnapshot LoadSnapshot(Action<string>? warn = null,
+        PredictionSource source = PredictionSource.Polymarket) => LoadPrediction(warn: warn, source: source).Snapshot;
 
-    public StoredPrediction LoadPrediction(string? selectedFileName = null, Action<string>? warn = null, bool fallbackToLatest = true)
+    public StoredPrediction LoadPrediction(string? selectedFileName = null, Action<string>? warn = null,
+        bool fallbackToLatest = true, PredictionSource source = PredictionSource.Polymarket)
     {
+        string prefix = PredictionFileNames.PrefixFor(source);
         if (selectedFileName is not null)
         {
             if (!PredictionFileNames.TryParse(selectedFileName, out _) && !PredictionFileNames.TryParseLegacy(selectedFileName, out _))
-                throw new ArgumentException("Prediction files must be named polymarket_predictions_YYYYMMDD.json.", nameof(selectedFileName));
+                throw new ArgumentException("Prediction files must be named polymarket_predictions_YYYYMMDD.json or kalshi_predictions_YYYYMMDD.json.", nameof(selectedFileName));
             selectedFileName = PredictionFileNames.Normalize(selectedFileName);
+            if (PredictionFileNames.Source(selectedFileName) != source)
+                throw new ArgumentException("The selected predictions file must match the prediction source.", nameof(selectedFileName));
         }
 
-        var snapshots = FindSnapshots(warn);
+        var snapshots = FindSnapshots(warn, source);
         if (selectedFileName is not null)
         {
             var selected = snapshots.FirstOrDefault(x => x.FileName == selectedFileName);
@@ -73,8 +79,8 @@ public sealed class ForecastStore(string dataDirectory, string bundledDataDirect
         }
 
         return snapshots.FirstOrDefault() ?? throw new InvalidDataException(
-            "No valid prediction snapshot is available. Use Configure > Update Predictions from Polymarket, " +
-            "or restore a Data/polymarket_predictions_YYYYMMDD.json file from the application distribution.");
+            $"No valid prediction snapshot is available. Use Configure > Update Predictions ({source}), " +
+            $"or restore a Data/{prefix}YYYYMMDD.json file from the application distribution.");
     }
 
     public void SaveSettings(AppSettings settings)
@@ -84,37 +90,43 @@ public sealed class ForecastStore(string dataDirectory, string bundledDataDirect
         WriteAtomically(SettingsPath, settings);
     }
 
-    public string SaveSnapshot(PredictionSnapshot snapshot)
+    public string SaveSnapshot(PredictionSnapshot snapshot) => SaveSnapshot(snapshot, SnapshotValidator.GetSource(snapshot));
+
+    public string SaveSnapshot(PredictionSnapshot snapshot, PredictionSource source)
     {
-        SnapshotValidator.Validate(snapshot);
-        string fileName = PredictionFileNames.ForSnapshot(snapshot);
+        SnapshotValidator.Validate(snapshot, source);
+        string fileName = PredictionFileNames.ForSnapshot(snapshot, source);
         WriteAtomically(GetSnapshotPath(fileName), snapshot);
         return fileName;
     }
 
-    private IReadOnlyList<StoredPrediction> FindSnapshots(Action<string>? warn)
+    private IReadOnlyList<StoredPrediction> FindSnapshots(Action<string>? warn, PredictionSource source)
     {
+        PredictionFileNames.PrefixFor(source);
         var snapshots = new Dictionary<string, StoredPrediction>(StringComparer.Ordinal);
-        var legacyFallbacks = new[] { LegacySnapshotPath, PreviousLegacySnapshotPath }
-            .Select(path => MigrateLegacySnapshot(path, warn)).OfType<StoredPrediction>().ToArray();
-        AddSnapshots(DataDirectory, snapshots, warn, migrateLegacyNames: true);
+        var legacyFallbacks = source == PredictionSource.Polymarket
+            ? new[] { LegacySnapshotPath, PreviousLegacySnapshotPath }
+                .Select(path => MigrateLegacySnapshot(path, warn)).OfType<StoredPrediction>().ToArray()
+            : Array.Empty<StoredPrediction>();
+        AddSnapshots(DataDirectory, snapshots, warn, source, migrateLegacyNames: true);
         foreach (var fallback in legacyFallbacks) snapshots.TryAdd(fallback.FileName, fallback);
         var pathComparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         if (!string.Equals(DataDirectory, BundledDataDirectory, pathComparison))
-            AddSnapshots(BundledDataDirectory, snapshots, warn, migrateLegacyNames: false);
+            AddSnapshots(BundledDataDirectory, snapshots, warn, source, migrateLegacyNames: false);
 
         return snapshots.Values.OrderByDescending(x => PredictionFileNames.Date(x.FileName)).ToArray();
     }
 
     private void AddSnapshots(string directory, Dictionary<string, StoredPrediction> snapshots,
-        Action<string>? warn, bool migrateLegacyNames)
+        Action<string>? warn, PredictionSource source, bool migrateLegacyNames)
     {
         string[] paths;
         try
         {
             if (!Directory.Exists(directory)) return;
-            paths = Directory.GetFiles(directory, "polymarket_predictions_*.json")
-                .Concat(Directory.GetFiles(directory, "predictions_*.json")).ToArray();
+            paths = Directory.GetFiles(directory, $"{PredictionFileNames.PrefixFor(source)}*.json")
+                .Concat(source == PredictionSource.Polymarket
+                    ? Directory.GetFiles(directory, "predictions_*.json") : Array.Empty<string>()).ToArray();
         }
         catch (Exception ex) when (IsStorageError(ex))
         {
@@ -128,14 +140,14 @@ public sealed class ForecastStore(string dataDirectory, string bundledDataDirect
             bool legacyName = PredictionFileNames.TryParseLegacy(originalFileName, out _);
             if (!PredictionFileNames.TryParse(originalFileName, out _) && !legacyName)
             {
-                warn?.Invoke($"Cannot use predictions file {originalFileName}: expected polymarket_predictions_YYYYMMDD.json with a valid date.");
+                warn?.Invoke($"Cannot use predictions file {originalFileName}: expected {PredictionFileNames.PrefixFor(source)}YYYYMMDD.json with a valid date.");
                 continue;
             }
             string fileName = PredictionFileNames.Normalize(originalFileName);
             if (snapshots.ContainsKey(fileName)) continue;
             try
             {
-                var snapshot = ReadSnapshot(path);
+                var snapshot = ReadSnapshot(path, source);
                 if (legacyName && migrateLegacyNames)
                 {
                     string canonicalPath = GetSnapshotPath(fileName);
@@ -172,8 +184,8 @@ public sealed class ForecastStore(string dataDirectory, string bundledDataDirect
             using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
             var snapshot = JsonSerializer.Deserialize<PredictionSnapshot>(reader.ReadToEnd(), ForecastJson.Options)
                 ?? throw new InvalidDataException($"{Path.GetFileName(legacyPath)} contains no data.");
-            SnapshotValidator.Validate(snapshot);
-            string fileName = PredictionFileNames.ForSnapshot(snapshot);
+            SnapshotValidator.Validate(snapshot, PredictionSource.Polymarket);
+            string fileName = PredictionFileNames.ForSnapshot(snapshot, PredictionSource.Polymarket);
             string path = GetSnapshotPath(fileName);
             if (File.Exists(path)) return null;
             legacy = new StoredPrediction(fileName, snapshot);
@@ -187,10 +199,10 @@ public sealed class ForecastStore(string dataDirectory, string bundledDataDirect
         }
     }
 
-    private static PredictionSnapshot ReadSnapshot(string path)
+    private static PredictionSnapshot ReadSnapshot(string path, PredictionSource source)
     {
         var snapshot = Read<PredictionSnapshot>(path);
-        SnapshotValidator.Validate(snapshot);
+        SnapshotValidator.Validate(snapshot, source);
         return snapshot;
     }
 
@@ -228,12 +240,28 @@ public sealed class ForecastStore(string dataDirectory, string bundledDataDirect
 internal static class PredictionFileNames
 {
     private const string Prefix = "polymarket_predictions_";
+    private const string KalshiPrefix = "kalshi_predictions_";
     private const string LegacyPrefix = "predictions_";
     private const string Suffix = ".json";
 
-    public static bool TryParse(string? fileName, out DateOnly date) => TryParse(fileName, Prefix, out date);
+    public static bool TryParse(string? fileName, out DateOnly date) =>
+        TryParse(fileName, Prefix, out date) || TryParse(fileName, KalshiPrefix, out date);
 
     public static bool TryParseLegacy(string? fileName, out DateOnly date) => TryParse(fileName, LegacyPrefix, out date);
+
+    public static string PrefixFor(PredictionSource source) => source switch
+    {
+        PredictionSource.Polymarket => Prefix,
+        PredictionSource.Kalshi => KalshiPrefix,
+        _ => throw new ArgumentOutOfRangeException(nameof(source), "Select Polymarket or Kalshi.")
+    };
+
+    public static PredictionSource Source(string fileName)
+    {
+        if (TryParse(fileName, KalshiPrefix, out _)) return PredictionSource.Kalshi;
+        if (TryParse(fileName, Prefix, out _) || TryParseLegacy(fileName, out _)) return PredictionSource.Polymarket;
+        throw new ArgumentException("Invalid prediction filename.", nameof(fileName));
+    }
 
     private static bool TryParse(string? fileName, string prefix, out DateOnly date)
     {
@@ -255,6 +283,8 @@ internal static class PredictionFileNames
         return date;
     }
 
-    public static string ForSnapshot(PredictionSnapshot snapshot) =>
-        $"{Prefix}{snapshot.RetrievedAt.UtcDateTime.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}{Suffix}";
+    public static string ForSnapshot(PredictionSnapshot snapshot) => ForSnapshot(snapshot, SnapshotValidator.GetSource(snapshot));
+
+    public static string ForSnapshot(PredictionSnapshot snapshot, PredictionSource source) =>
+        $"{PrefixFor(source)}{snapshot.RetrievedAt.UtcDateTime.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}{Suffix}";
 }

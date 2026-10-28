@@ -2,7 +2,7 @@
 
 ## What is this & Why might it be interesting?
 
-- A .NET 10 console application that forecasts the 2026 U.S. Senate elections using [Polymarket](https://polymarket.com/) probabilities, Monte Carlo simulations, and direct probability calculations.
+- A .NET 10 console application that forecasts the 2026 U.S. Senate elections using [Polymarket](https://polymarket.com/) or [Kalshi](https://kalshi.com/) probabilities, Monte Carlo simulations, and direct probability calculations.
 - Polymarket predictions (especially when the forecast is coming to resolution) is highly calibrated, which makes individual predictions effective intelligence points for forecasts.
 - **Model wave elections:** a shared national factor lets races move together, capturing scenarios such as a Democratic or Republican wave.
 - **The average doesn’t tell the whole story:** correlation preserves individual Senate race probabilities and expected seat totals while changing the likelihood of unusually large gains or losses.
@@ -14,8 +14,9 @@
 - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
-- Predictions file: `polymarket_predictions_20261028.json` (latest bundled snapshot)
-- Election: 2026 | Races: 35 | Retrieved: 2026-10-28 12:34 UTC
+- Default source: Polymarket | Predictions file: `polymarket_predictions_20261028.json`
+- Kalshi snapshot: `kalshi_predictions_20261028.json` (same 35 races; retrieved 2026-10-28 13:30 UTC)
+- Election: 2026 | Races: 35 | Polymarket retrieved: 2026-10-28 12:34 UTC
 
 ## Run and configure
 
@@ -31,9 +32,10 @@ Under **Configure**:
 
 - **Configure Rho (Correlation)**: set rho from 0 through 0.99 using a decimal point. Blank input keeps the current value; saved settings persist across restarts. What is Rho? Rho is a proxy for the "Democratic Wave". The US Senate elections are independent state elections, but in the overall environment in the country, there is some correlation between the races. This number represents how correlated they are. What is super interesting is that it doesn't change the expected outcome (average), but it expands the tails of the distribution. More extreme events (upsets) happen. 
 - **Configure Simulation Count**: a whole-number count from 1,000 through 10,000,000. Blank input keeps the current value; saved settings persist across restarts.
-- **Select Predictions File**: choose a dated snapshot or **Latest available**, which selects the newest valid snapshot. A specific selection persists across restarts until changed or a successful refresh returns selection to **Latest available**. Selecting a file uses saved data without downloading anything.
-- **List Current US Senate Polymarket Probabilities**: view the selected snapshot, sorthed by the closest races first. Closeness is the gap between a race's two highest normalized outcome probabilities.
-- **Update Predictions from Polymarket**: manually fetch current prices. No account, wallet, or API key is required. Downloads never happen automatically.
+- **6) Select Prediction Source**: choose Polymarket or Kalshi. Polymarket is the default for new and existing settings. Switching sources selects that source's latest valid saved snapshot and persists across restarts. If no valid snapshot is available, the previous source and selection are retained.
+- **Select Predictions File**: choose a dated snapshot or **Latest available** for the selected source. A specific selection persists across restarts until changed or a successful refresh returns selection to **Latest available**. Selecting a source or file uses saved data without downloading anything.
+- **List Current US Senate Probabilities**: view the selected snapshot, sorted by the closest races first. The menu shows the active source beside options 4 and 6, and the active filename beside option 5. Closeness is the gap between a race's two highest normalized outcome probabilities.
+- **Update Predictions (Polymarket/Kalshi)**: manually fetch current prices from the selected source. Public market data requires no account, wallet, or API key. Downloads never happen automatically.
 
 ## Calculation methods
 
@@ -53,10 +55,9 @@ The correlated results in options 2, 3, and 4 use the same model. More samples r
 
 ## Prediction data and refreshes
 
-- Bundled snapshots for October 24–28, 2026 work offline. The active filename and retrieval time appear in the menus.
+- Bundled Polymarket snapshots for October 24–28, 2026 and the October 28 Kalshi snapshot work offline. The active source, filename, and retrieval time appear in the menus.
 - [Polymarket's public Gamma API](https://docs.polymarket.com/market-data/discover-markets) supplies market-implied prices. Each race's mutually exclusive Yes prices are divided by their total to produce probabilities that sum to one.
-- Refreshes save a new snapshot only after all 35 races validate. Failed, partial, or unrecognized updates leave the previous predictions selected.
-- Files use `polymarket_predictions_YYYYMMDD.json`, dated in UTC. Another refresh on the same UTC date replaces that day's file; earlier dates remain available.
+- [Kalshi's public REST API](https://docs.kalshi.com/getting_started/quick_start_market_data) supplies the midpoint of each contract's Yes bid and ask. These midpoints are divided by their race total in the same way. Missing or unusable quotes fail the refresh; there is no fallback to last trades or the other provider.
 
 ## Build and verify
 

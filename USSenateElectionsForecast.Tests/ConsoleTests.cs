@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using USSenateElectionsForecast.Markets.Polymarket;
 
 namespace USSenateElectionsForecast.Tests;
 
@@ -26,9 +27,11 @@ public sealed class ConsoleTests
         Assert.DoesNotContain("Select an option:", scenario.Text);
         StringAssert.Contains(scenario.Text, "0) Exit");
         StringAssert.Contains(scenario.Text, "0) Back");
-        Assert.AreEqual(3, Occurrences(scenario.Text, "Please enter a number from 0 to 5."));
-        StringAssert.Contains(scenario.Text, "4) List Current US Senate Polymarket Probabilities");
-        StringAssert.Contains(scenario.Text, "5) Select Predictions File");
+        Assert.AreEqual(2, Occurrences(scenario.Text, "Please enter a number from 0 to 5."));
+        Assert.AreEqual(1, Occurrences(scenario.Text, "Please enter a number from 0 to 6."));
+        StringAssert.Contains(scenario.Text, "4) List Current US Senate Probabilities (Polymarket)");
+        StringAssert.Contains(scenario.Text, $"5) Select Predictions File ({scenario.Store.LoadPrediction().FileName})");
+        StringAssert.Contains(scenario.Text, "6) Select Prediction Source (Polymarket)");
         Assert.DoesNotContain("\u001b", scenario.Text);
     }
 
@@ -69,7 +72,7 @@ public sealed class ConsoleTests
         Assert.AreEqual(before.RetrievedAt, after.RetrievedAt);
         StringAssert.Contains(scenario.Text, "Could not update predictions:");
         StringAssert.Contains(scenario.Text, "The previous predictions are still selected.");
-        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "1) Update Predictions from Polymarket"));
+        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "1) Update Predictions (Polymarket)"));
     }
 
     [TestMethod]
@@ -119,7 +122,7 @@ public sealed class ConsoleTests
         Assert.AreEqual(predictionsBefore, File.ReadAllText(predictionsPath));
         Assert.AreEqual(settingsBefore, File.ReadAllText(scenario.Store.SettingsPath));
         StringAssert.Contains(scenario.Text, expectedListing.ToString());
-        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "4) List Current US Senate Polymarket Probabilities"));
+        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "4) List Current US Senate Probabilities (Polymarket)"));
         Assert.DoesNotContain("Running simulation...", scenario.Text);
     }
 
@@ -130,9 +133,11 @@ public sealed class ConsoleTests
         await scenario.RunAsync();
         StringAssert.Contains(scenario.Text, "Predictions unavailable.");
         Assert.AreEqual(4, Occurrences(scenario.Text, "Forecast calculation is unavailable until predictions are loaded."));
-        StringAssert.Contains(scenario.Text, "1) Update Predictions from Polymarket");
-        StringAssert.Contains(scenario.Text, "load them.");
-        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "4) List Current US Senate Polymarket Probabilities"));
+        StringAssert.Contains(scenario.Text, "1) Update Predictions (Polymarket)");
+        StringAssert.Contains(scenario.Text.Replace(Environment.NewLine, " "), "load them.");
+        Assert.IsGreaterThanOrEqualTo(2, Occurrences(scenario.Text, "4) List Current US Senate Probabilities (Polymarket)"));
+        StringAssert.Contains(scenario.Text, "5) Select Predictions File (Unavailable)");
+        StringAssert.Contains(scenario.Text, "6) Select Prediction Source (Polymarket)");
     }
 
     [TestMethod]

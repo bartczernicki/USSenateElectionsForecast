@@ -1,4 +1,7 @@
-﻿namespace USSenateElectionsForecast;
+﻿using USSenateElectionsForecast.Markets.Kalshi;
+using USSenateElectionsForecast.Markets.Polymarket;
+
+namespace USSenateElectionsForecast;
 
 internal static class Program
 {
@@ -31,7 +34,7 @@ internal static class Program
             http.DefaultRequestHeaders.UserAgent.ParseAdd("USSenateElectionsForecast/1.0");
             var presentation = new ConsolePresentation(Console.Out, enableColor: !Console.IsOutputRedirected);
             var app = new ConsoleApp(Console.In, Console.Out, store, new PolymarketClient(http),
-                new SimulationEngine(), presentation, new ProbabilityCalculationEngine());
+                new SimulationEngine(), presentation, new ProbabilityCalculationEngine(), new KalshiClient(http));
             await app.RunAsync(cancellation.Token);
             return 0;
         }

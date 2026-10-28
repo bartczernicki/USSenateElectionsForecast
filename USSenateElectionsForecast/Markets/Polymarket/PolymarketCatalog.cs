@@ -1,21 +1,24 @@
-namespace USSenateElectionsForecast;
+using USSenateElectionsForecast.Markets;
 
-public sealed record MarketDefinition(string MarketId, string MarketSlug, Caucus Caucus)
+namespace USSenateElectionsForecast.Markets.Polymarket;
+
+public sealed record PolymarketMarketDefinition(string MarketId, string MarketSlug, Caucus Caucus)
+    : MarketDefinition(MarketId, MarketSlug, Caucus)
 {
     public string SourceUrl => $"https://gamma-api.polymarket.com/markets/{MarketId}";
 }
 
-public sealed record RaceDefinition(
+public sealed record PolymarketRaceDefinition(
     string State,
     string EventSlug,
     bool IsSpecial,
-    IReadOnlyList<MarketDefinition> Markets)
+    IReadOnlyList<MarketDefinition> Markets) : RaceDefinition(State, EventSlug, IsSpecial, Markets)
 {
     public string EventUrl => $"https://polymarket.com/event/{EventSlug}";
     public string SourceUrl => $"https://gamma-api.polymarket.com/events/slug/{EventSlug}";
 }
 
-public static class RaceCatalog
+public static class PolymarketCatalog
 {
     public const int ElectionYear = 2026;
     public const int SchemaVersion = 1;
@@ -33,10 +36,10 @@ public static class RaceCatalog
     // Market IDs and slugs were verified against Gamma on October 24, 2026.
     // D/R party or registration implies the corresponding caucus in this model.
     // Unknown independent affiliations, Greens, and unmapped Alaska candidates stay Unknown.
-    public static IReadOnlyList<RaceDefinition> All { get; } = Array.AsReadOnly(new[]
+    public static IReadOnlyList<PolymarketRaceDefinition> All { get; } = Array.AsReadOnly(new[]
     {
         Pair("Alabama", "alabama", "630627", "630628", eventSuffix: "-154"),
-        new RaceDefinition("Alaska", "alaska-senate-election-winner", false, Array.AsReadOnly(new[]
+        new PolymarketRaceDefinition("Alaska", "alaska-senate-election-winner", false, Array.AsReadOnly(new[]
         {
             Candidate("634974", "dan-sullivan", Caucus.Republican),
             Candidate("634975", "ann-diener", Caucus.Unknown),
@@ -81,13 +84,13 @@ public static class RaceCatalog
         Pair("Wyoming", "wyoming", "631002", "631003")
     });
 
-    private static MarketDefinition Candidate(string id, string candidate, Caucus caucus) =>
+    private static PolymarketMarketDefinition Candidate(string id, string candidate, Caucus caucus) =>
         new(id, $"will-{candidate}-win-the-alaska-senate-race-in-2026", caucus);
 
-    private static RaceDefinition Pair(string state, string slug, string democraticId, string republicanId,
-        bool isSpecial = false, string eventSuffix = "", MarketDefinition? extra = null)
+    private static PolymarketRaceDefinition Pair(string state, string slug, string democraticId, string republicanId,
+        bool isSpecial = false, string eventSuffix = "", PolymarketMarketDefinition? extra = null)
     {
-        var markets = new List<MarketDefinition>
+        var markets = new List<PolymarketMarketDefinition>
         {
             new(democraticId, $"will-the-democrats-win-the-{slug}-senate-race-in-2026", Caucus.Democratic),
             new(republicanId, $"will-the-republicans-win-the-{slug}-senate-race-in-2026", Caucus.Republican)

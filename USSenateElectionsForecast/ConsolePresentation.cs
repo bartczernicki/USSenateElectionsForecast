@@ -67,13 +67,14 @@ public sealed class ConsolePresentation
     {
         _output.WriteLine();
         Line("Assumptions & Configurations:", Green);
+        Line($"- Prediction source: {settings.Source}", Green);
         Line($"- Simulation count: {settings.TrialCount.ToString("N0", CultureInfo.InvariantCulture)} | Rho: {settings.Rho.ToString("0.00############", CultureInfo.InvariantCulture)}", Green);
         Line("- Rho links race scores: 0 = independent; higher = more national swing.", Green);
         Line("- Default 0.12: 12% national / 88% local variance; our assumption, not Silver's.", Green);
         Line("- Shared polling errors motivate correlation (Silver/FiveThirtyEight).", Green);
         if (snapshot is null)
         {
-            Warning("Predictions unavailable. Use Configure > Update Predictions from Polymarket before forecasting.");
+            Warning($"Predictions unavailable. Use Configure > Update Predictions ({settings.Source}) before forecasting.");
             return;
         }
         if (predictionFileName is not null) Line($"- Predictions file: {predictionFileName}", Green);
@@ -81,7 +82,7 @@ public sealed class ConsolePresentation
         Line("- Seats off ballot: Democratic caucus 34 | Republican caucus 31", Green);
         Line("- Control: Democratic caucus 51+; Republican caucus 50+ (VP breaks ties).", Green);
         if (DateTimeOffset.UtcNow - snapshot.RetrievedAt > TimeSpan.FromDays(1))
-            Warning("These saved predictions are over 24 hours old. Update Predictions from Polymarket to refresh them.");
+            Warning($"These saved predictions are over 24 hours old. Update Predictions ({settings.Source}) to refresh them.");
     }
 
     public void Results(SimulationResult result) => Results(ProbabilityResult.FromSimulation(result));

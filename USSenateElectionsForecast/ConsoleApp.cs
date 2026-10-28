@@ -1,5 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
+using USSenateElectionsForecast.Markets.Kalshi;
+using USSenateElectionsForecast.Markets.Polymarket;
 
 namespace USSenateElectionsForecast;
 
@@ -10,7 +12,8 @@ public sealed class ConsoleApp(
     PolymarketClient client,
     SimulationEngine engine,
     ConsolePresentation presentation,
-    ProbabilityCalculationEngine probabilityEngine)
+    ProbabilityCalculationEngine probabilityEngine,
+    KalshiClient? kalshiClient = null)
 {
     private AppSettings _settings = new();
     private PredictionSnapshot? _snapshot;
@@ -20,7 +23,7 @@ public sealed class ConsoleApp(
     {
         presentation.Banner();
         _settings = store.LoadSettings(presentation.Warning);
-        try { Activate(store.LoadPrediction(_settings.SelectedPredictionFile, presentation.Warning)); }
+        try { Activate(store.LoadPrediction(_settings.SelectedPredictionFile, presentation.Warning, source: _settings.Source)); }
         catch (Exception error) when (IsStorageError(error))
         {
             presentation.Error($"Could not load predictions: {error.Message}");
@@ -40,7 +43,7 @@ public sealed class ConsoleApp(
             }
             if (_snapshot is null)
             {
-                presentation.Warning("Forecast calculation is unavailable until predictions are loaded. Select Configure > Update Predictions from Polymarket.");
+                presentation.Warning($"Forecast calculation is unavailable until predictions are loaded. Select Configure > Update Predictions ({_settings.Source}).");
             }
             else
             {
@@ -87,7 +90,7 @@ public sealed class ConsoleApp(
                 }
                 catch (Exception error) when (error is InvalidDataException or ArgumentException)
                 {
-                    presentation.Error($"Forecast calculation could not run: {error.Message} Update Predictions from Polymarket and try again.");
+                    presentation.Error($"Forecast calculation could not run: {error.Message} Update Predictions ({_settings.Source}) and try again.");
                 }
             }
             if (!Pause()) return;
@@ -100,18 +103,26 @@ public sealed class ConsoleApp(
         {
             presentation.Context(_settings, _snapshot, _predictionFileName);
             presentation.Menu("Configure",
-                ["Update Predictions from Polymarket", "Configure Rho (Correlation)", "Configure Simulation Count", "List Current US Senate Polymarket Probabilities", "Select Predictions File"], "Back");
-            int? selection = ReadSelection(5);
+                [$"Update Predictions ({_settings.Source})", "Configure Rho (Correlation)", "Configure Simulation Count",
+                    $"List Current US Senate Probabilities ({_settings.Source})",
+                    $"Select Predictions File ({_predictionFileName ?? "Unavailable"})",
+                    $"Select Prediction Source ({_settings.Source})"], "Back");
+            int? selection = ReadSelection(6);
             if (selection is null) return false;
             if (selection == 0) return true;
             if (selection == 1)
             {
-                output.WriteLine("Updating all 35 Senate races from Polymarket...");
+                output.WriteLine($"Updating all 35 Senate races from {_settings.Source}...");
                 try
                 {
-                    PredictionSnapshot updated = await client.FetchAsync(cancellationToken);
+                    PredictionSnapshot updated = _settings.Source switch
+                    {
+                        PredictionSource.Polymarket => await client.FetchAsync(cancellationToken),
+                        PredictionSource.Kalshi => await (kalshiClient ?? throw new InvalidDataException("Kalshi refresh is not configured.")).FetchAsync(cancellationToken),
+                        _ => throw new InvalidDataException("Select a supported prediction source before updating.")
+                    };
                     store.SaveSnapshot(updated);
-                    StoredPrediction latest = store.LoadPrediction(warn: presentation.Warning);
+                    StoredPrediction latest = store.LoadPrediction(warn: presentation.Warning, source: _settings.Source);
                     AppSettings settings = _settings with { SelectedPredictionFile = null };
                     if (_settings.SelectedPredictionFile is not null) store.SaveSettings(settings);
                     _settings = settings;
@@ -129,12 +140,16 @@ public sealed class ConsoleApp(
             else if (selection == 4)
             {
                 if (_snapshot is not null) presentation.Predictions(_snapshot, _predictionFileName);
-                else presentation.Warning("Predictions unavailable. Use Configure > Update Predictions from Polymarket to load them.");
+                else presentation.Warning($"Predictions unavailable. Use Configure > Update Predictions ({_settings.Source}) to load them.");
                 if (!Pause()) return false;
             }
             else if (selection == 5)
             {
                 if (!SelectPredictions(cancellationToken)) return false;
+            }
+            else if (selection == 6)
+            {
+                if (!SelectSource(cancellationToken)) return false;
             }
             else if (!ConfigureValue(selection == 2)) return false;
         }
@@ -145,7 +160,7 @@ public sealed class ConsoleApp(
     {
         try
         {
-            IReadOnlyList<PredictionFileOption> files = store.ListSnapshots(presentation.Warning);
+            IReadOnlyList<PredictionFileOption> files = store.ListSnapshots(presentation.Warning, source: _settings.Source);
             if (cancellationToken.IsCancellationRequested) return false;
             var items = new List<string>
             {
@@ -159,7 +174,7 @@ public sealed class ConsoleApp(
             if (selection == 0) return true;
 
             string? selectedFile = selection == 1 ? null : files[selection.Value - 2].FileName;
-            StoredPrediction prediction = store.LoadPrediction(selectedFile, presentation.Warning, fallbackToLatest: false);
+            StoredPrediction prediction = store.LoadPrediction(selectedFile, presentation.Warning, fallbackToLatest: false, source: _settings.Source);
             if (cancellationToken.IsCancellationRequested) return false;
             AppSettings settings = _settings with { SelectedPredictionFile = selectedFile };
             store.SaveSettings(settings);
@@ -171,6 +186,35 @@ public sealed class ConsoleApp(
         {
             presentation.Error($"Could not select predictions: {error.Message}");
             presentation.Warning("The previous predictions and configuration are still selected.");
+        }
+        return !cancellationToken.IsCancellationRequested && Pause();
+    }
+
+    private bool SelectSource(CancellationToken cancellationToken)
+    {
+        PredictionSource[] sources = [PredictionSource.Polymarket, PredictionSource.Kalshi];
+        presentation.Menu("Select Prediction Source", sources.Select(source => source.ToString() +
+            (source == _settings.Source ? " (selected)" : "")).ToArray(), "Back");
+        int? selection = ReadSelection(sources.Length);
+        if (selection is null || cancellationToken.IsCancellationRequested) return false;
+        if (selection == 0) return true;
+
+        PredictionSource source = sources[selection.Value - 1];
+        if (source == _settings.Source) return true;
+        try
+        {
+            StoredPrediction prediction = store.LoadPrediction(warn: presentation.Warning, source: source);
+            if (cancellationToken.IsCancellationRequested) return false;
+            AppSettings settings = _settings with { Source = source, SelectedPredictionFile = null };
+            store.SaveSettings(settings);
+            _settings = settings;
+            Activate(prediction);
+            presentation.Success($"Selected prediction source: {source}. Using {prediction.FileName}.");
+        }
+        catch (Exception error) when (IsStorageError(error))
+        {
+            presentation.Error($"Could not select prediction source: {error.Message}");
+            presentation.Warning("The previous predictions and source are still selected.");
         }
         return !cancellationToken.IsCancellationRequested && Pause();
     }

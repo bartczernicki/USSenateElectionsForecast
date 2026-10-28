@@ -124,7 +124,7 @@ public sealed class StoreTests
     {
         var missing = new ForecastStore(directory, Path.Combine(directory, "missing"));
         var error = Assert.ThrowsExactly<InvalidDataException>(() => missing.LoadSnapshot());
-        StringAssert.Contains(error.Message, "Update Predictions from Polymarket");
+        StringAssert.Contains(error.Message, "Update Predictions (Polymarket)");
     }
 
     [TestMethod]

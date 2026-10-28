@@ -1,6 +1,7 @@
 using System.Globalization;
 using MathNet.Numerics.Distributions;
 using MathNet.Numerics.Integration;
+using USSenateElectionsForecast.Markets.Polymarket;
 
 namespace USSenateElectionsForecast;
 
@@ -89,9 +90,9 @@ public sealed class ProbabilityCalculationEngine
 
         var expectedMeans = new[]
         {
-            RaceCatalog.DemocraticBaseline + races.Sum(race => race.Democratic),
+            PolymarketCatalog.DemocraticBaseline + races.Sum(race => race.Democratic),
             races.Sum(race => race.Unknown),
-            RaceCatalog.RepublicanBaseline + races.Sum(race => race.Republican)
+            PolymarketCatalog.RepublicanBaseline + races.Sum(race => race.Republican)
         };
         double[][]? previous = null;
         int consecutiveConverged = 0;
@@ -168,8 +169,8 @@ public sealed class ProbabilityCalculationEngine
     private static ProbabilityResult CreateResult(PredictionSnapshot snapshot, CalculationMethod method,
         int? sampleCount, double rho, double[][] distributions, IntegrationDiagnostics? integration = null) =>
         new(method, sampleCount, rho, snapshot.RetrievedAt,
-            Shift(distributions[0], RaceCatalog.DemocraticBaseline),
-            Shift(distributions[2], RaceCatalog.RepublicanBaseline),
+            Shift(distributions[0], PolymarketCatalog.DemocraticBaseline),
+            Shift(distributions[2], PolymarketCatalog.RepublicanBaseline),
             Shift(distributions[1], 0), integration);
 
     private static ProbabilitySeatDistribution Shift(double[] contestedSeats, int baseline)
@@ -187,7 +188,7 @@ public sealed class ProbabilityCalculationEngine
         double error = 0;
         for (int bloc = 0; bloc < distributions.Length; bloc++)
         {
-            int baseline = bloc == 0 ? RaceCatalog.DemocraticBaseline : bloc == 2 ? RaceCatalog.RepublicanBaseline : 0;
+            int baseline = bloc == 0 ? PolymarketCatalog.DemocraticBaseline : bloc == 2 ? PolymarketCatalog.RepublicanBaseline : 0;
             double mean = distributions[bloc].Select((probability, seats) => probability * (seats + baseline)).Sum();
             error = Math.Max(error, Math.Abs(mean - expectedMeans[bloc]));
         }

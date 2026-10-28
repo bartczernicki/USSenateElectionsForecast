@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Text.Json;
 
-namespace USSenateElectionsForecast;
+namespace USSenateElectionsForecast.Markets.Polymarket;
 
 public sealed class PolymarketClient(HttpClient httpClient)
 {
@@ -10,7 +10,7 @@ public sealed class PolymarketClient(HttpClient httpClient)
     {
         using var concurrency = new SemaphoreSlim(4);
         using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var requests = RaceCatalog.All.Select(async definition =>
+        var requests = PolymarketCatalog.All.Select(async definition =>
         {
             try
             {
@@ -25,12 +25,12 @@ public sealed class PolymarketClient(HttpClient httpClient)
             }
         });
         var races = await Task.WhenAll(requests);
-        var snapshot = new PredictionSnapshot(RaceCatalog.SchemaVersion, RaceCatalog.ElectionYear, DateTimeOffset.UtcNow, races);
-        SnapshotValidator.Validate(snapshot);
+        var snapshot = new PredictionSnapshot(PolymarketCatalog.SchemaVersion, PolymarketCatalog.ElectionYear, DateTimeOffset.UtcNow, races);
+        SnapshotValidator.Validate(snapshot, PredictionSource.Polymarket);
         return snapshot;
     }
 
-    private async Task<RacePrediction> FetchRaceAsync(RaceDefinition definition, CancellationToken cancellationToken)
+    private async Task<RacePrediction> FetchRaceAsync(PolymarketRaceDefinition definition, CancellationToken cancellationToken)
     {
         for (var attempt = 1; ; attempt++)
         {
@@ -48,7 +48,7 @@ public sealed class PolymarketClient(HttpClient httpClient)
         }
     }
 
-    public static RacePrediction ParseRace(string json, RaceDefinition definition)
+    public static RacePrediction ParseRace(string json, PolymarketRaceDefinition definition)
     {
         ArgumentNullException.ThrowIfNull(definition);
         try

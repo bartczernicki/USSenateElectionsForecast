@@ -1,3 +1,7 @@
+using USSenateElectionsForecast.Markets;
+using USSenateElectionsForecast.Markets.Kalshi;
+using USSenateElectionsForecast.Markets.Polymarket;
+
 namespace USSenateElectionsForecast;
 
 public static class SnapshotValidator
@@ -6,13 +10,30 @@ public static class SnapshotValidator
     public const double MaximumRawPriceSum = 1.10;
     private const double Tolerance = 1e-9;
 
-    public static void Validate(PredictionSnapshot snapshot)
+    public static void Validate(PredictionSnapshot snapshot) => Validate(snapshot, GetSource(snapshot));
+
+    public static PredictionSource GetSource(PredictionSnapshot snapshot)
     {
-        if (snapshot is null || snapshot.SchemaVersion != RaceCatalog.SchemaVersion || snapshot.ElectionYear != RaceCatalog.ElectionYear)
+        if (snapshot?.Races is null || snapshot.Races.Count == 0)
+            throw new InvalidDataException("A complete forecast requires all 35 Senate races, including the Florida and Ohio special elections.");
+        foreach (var source in Enum.GetValues<PredictionSource>())
+        {
+            var catalog = Catalog(source);
+            if (snapshot.Races.All(race => race is not null && catalog.Any(definition =>
+                definition.State == race.State && definition.EventSlug == race.EventSlug)))
+                return source;
+        }
+        throw new InvalidDataException("The predictions contain mixed or unrecognized market sources. Use a complete Polymarket or Kalshi snapshot.");
+    }
+
+    public static void Validate(PredictionSnapshot snapshot, PredictionSource source)
+    {
+        var catalog = Catalog(source);
+        if (snapshot is null || snapshot.SchemaVersion != PolymarketCatalog.SchemaVersion || snapshot.ElectionYear != PolymarketCatalog.ElectionYear)
             throw new InvalidDataException("The predictions must use schema version 1 and election year 2026.");
         if (snapshot.RetrievedAt == default)
             throw new InvalidDataException("The predictions have no retrieval timestamp.");
-        if (snapshot.Races is null || snapshot.Races.Count != RaceCatalog.All.Count)
+        if (snapshot.Races is null || snapshot.Races.Count != catalog.Count)
             throw new InvalidDataException("A complete forecast requires all 35 Senate races, including the Florida and Ohio special elections.");
 
         var states = new HashSet<string>(StringComparer.Ordinal);
@@ -21,7 +42,7 @@ public static class SnapshotValidator
         {
             if (race is null || !states.Add(race.State))
                 throw new InvalidDataException("The predictions contain a missing or duplicate race.");
-            var definition = RaceCatalog.All.SingleOrDefault(x => x.State == race.State)
+            var definition = catalog.SingleOrDefault(x => x.State == race.State)
                 ?? throw new InvalidDataException($"Unexpected Senate race: {race.State}.");
             ValidateRace(race, definition);
             foreach (var outcome in race.Outcomes)
@@ -29,6 +50,13 @@ public static class SnapshotValidator
                     throw new InvalidDataException($"Duplicate market ID {outcome.MarketId} across races.");
         }
     }
+
+    private static IReadOnlyList<RaceDefinition> Catalog(PredictionSource source) => source switch
+    {
+        PredictionSource.Polymarket => PolymarketCatalog.All,
+        PredictionSource.Kalshi => KalshiRaceCatalog.All,
+        _ => throw new ArgumentOutOfRangeException(nameof(source), "Select Polymarket or Kalshi.")
+    };
 
     internal static void ValidateRace(RacePrediction race, RaceDefinition definition)
     {

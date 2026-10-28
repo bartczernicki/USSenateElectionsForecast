@@ -1,4 +1,5 @@
 using MathNet.Numerics.Distributions;
+using USSenateElectionsForecast.Markets.Polymarket;
 
 namespace USSenateElectionsForecast;
 
@@ -37,8 +38,8 @@ public sealed class SimulationEngine
             if ((trial & 255) == 0)
                 cancellationToken.ThrowIfCancellationRequested();
 
-            var democraticSeats = RaceCatalog.DemocraticBaseline;
-            var republicanSeats = RaceCatalog.RepublicanBaseline;
+            var democraticSeats = PolymarketCatalog.DemocraticBaseline;
+            var republicanSeats = PolymarketCatalog.RepublicanBaseline;
             var unknownSeats = 0;
             var nationalShock = effectiveRho > 0 ? Normal.Sample(generator, 0, 1) * nationalWeight : 0;
 

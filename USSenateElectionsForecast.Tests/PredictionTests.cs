@@ -3,6 +3,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using USSenateElectionsForecast.Markets.Polymarket;
 
 namespace USSenateElectionsForecast.Tests;
 
@@ -10,18 +11,18 @@ namespace USSenateElectionsForecast.Tests;
 public sealed class PredictionTests
 {
     public TestContext TestContext { get; set; } = null!;
-    private static RaceDefinition Texas => RaceCatalog.All.Single(x => x.State == "Texas");
+    private static PolymarketRaceDefinition Texas => PolymarketCatalog.All.Single(x => x.State == "Texas");
 
     [TestMethod]
     public void VerifiedCatalogHasThirtyFiveRacesAndSeventyNineUniqueContracts()
     {
-        Assert.HasCount(35, RaceCatalog.All);
-        Assert.HasCount(35, RaceCatalog.All.Select(x => x.State).Distinct().ToArray());
-        Assert.HasCount(79, RaceCatalog.All.SelectMany(x => x.Markets).Select(x => x.MarketId).Distinct().ToArray());
-        Assert.HasCount(79, RaceCatalog.All.SelectMany(x => x.Markets).Select(x => x.MarketSlug).Distinct().ToArray());
-        CollectionAssert.AreEquivalent(new[] { "Florida", "Ohio" }, RaceCatalog.All.Where(x => x.IsSpecial).Select(x => x.State).ToArray());
-        Assert.AreEqual(100, RaceCatalog.DemocraticBaseline + RaceCatalog.RepublicanBaseline + RaceCatalog.All.Count);
-        Assert.AreEqual("alabama-senate-election-winner-154", RaceCatalog.All[0].EventSlug);
+        Assert.HasCount(35, PolymarketCatalog.All);
+        Assert.HasCount(35, PolymarketCatalog.All.Select(x => x.State).Distinct().ToArray());
+        Assert.HasCount(79, PolymarketCatalog.All.SelectMany(x => x.Markets).Select(x => x.MarketId).Distinct().ToArray());
+        Assert.HasCount(79, PolymarketCatalog.All.SelectMany(x => x.Markets).Select(x => x.MarketSlug).Distinct().ToArray());
+        CollectionAssert.AreEquivalent(new[] { "Florida", "Ohio" }, PolymarketCatalog.All.Where(x => x.IsSpecial).Select(x => x.State).ToArray());
+        Assert.AreEqual(100, PolymarketCatalog.DemocraticBaseline + PolymarketCatalog.RepublicanBaseline + PolymarketCatalog.All.Count);
+        Assert.AreEqual("alabama-senate-election-winner-154", PolymarketCatalog.All[0].EventSlug);
     }
 
     [TestMethod]
@@ -31,7 +32,7 @@ public sealed class PredictionTests
         SnapshotValidator.Validate(snapshot);
         var fixtures = ReadFixtures();
         Assert.AreEqual(fixtures["capturedAtUtc"]!.GetValue<DateTimeOffset>(), snapshot.RetrievedAt);
-        foreach (var definition in RaceCatalog.All)
+        foreach (var definition in PolymarketCatalog.All)
         {
             var parsed = PolymarketClient.ParseRace(Event(definition).ToJsonString(), definition);
             var bundled = snapshot.Races.Single(x => x.State == definition.State);
@@ -42,7 +43,7 @@ public sealed class PredictionTests
     [TestMethod]
     public void CandidateAndIndependentMarketsUseExplicitMappings()
     {
-        var alaskaDefinition = RaceCatalog.All.Single(x => x.State == "Alaska");
+        var alaskaDefinition = PolymarketCatalog.All.Single(x => x.State == "Alaska");
         var alaska = PolymarketClient.ParseRace(Event(alaskaDefinition).ToJsonString(), alaskaDefinition);
         Assert.HasCount(7, alaska.Outcomes);
         Assert.AreEqual(Caucus.Democratic, alaska.Outcomes.Single(x => x.MarketId == "634980").Caucus);
@@ -50,7 +51,7 @@ public sealed class PredictionTests
         Assert.AreEqual(Caucus.Unknown, alaska.Outcomes.Single(x => x.MarketId == "634979").Caucus);
         foreach (var state in new[] { "Nebraska", "Montana", "Idaho", "South Dakota" })
         {
-            var definition = RaceCatalog.All.Single(x => x.State == state);
+            var definition = PolymarketCatalog.All.Single(x => x.State == state);
             var race = PolymarketClient.ParseRace(Event(definition).ToJsonString(), definition);
             Assert.HasCount(3, race.Outcomes);
             Assert.IsGreaterThan(0.0, race.ProbabilityFor(Caucus.Unknown));
@@ -60,7 +61,7 @@ public sealed class PredictionTests
     [TestMethod]
     public void InactiveUnpricedPlaceholdersAreIgnored()
     {
-        var definition = RaceCatalog.All.Single(x => x.State == "Alaska");
+        var definition = PolymarketCatalog.All.Single(x => x.State == "Alaska");
         var source = Event(definition);
         Assert.IsGreaterThan(definition.Markets.Count, source["markets"]!.AsArray().Count);
         var race = PolymarketClient.ParseRace(source.ToJsonString(), definition);
@@ -258,7 +259,7 @@ public sealed class PredictionTests
         var events = FixtureDictionary();
         using var handler = new FixtureHandler((request, attempt, _) =>
         {
-            if (request.RequestUri!.Segments.Last() == RaceCatalog.All[0].EventSlug && attempt == 1)
+            if (request.RequestUri!.Segments.Last() == PolymarketCatalog.All[0].EventSlug && attempt == 1)
             {
                 var limited = new HttpResponseMessage(HttpStatusCode.TooManyRequests);
                 limited.Headers.RetryAfter = new(TimeSpan.Zero);
@@ -319,7 +320,7 @@ public sealed class PredictionTests
     private static JsonObject ReadFixtures() => JsonNode.Parse(File.ReadAllText(
         Path.Combine(AppContext.BaseDirectory, "Fixtures", "polymarket-events.json")))!.AsObject();
 
-    private static JsonObject Event(RaceDefinition definition) => ReadFixtures()["events"]!.AsArray()
+    private static JsonObject Event(PolymarketRaceDefinition definition) => ReadFixtures()["events"]!.AsArray()
         .Single(x => x!["slug"]!.GetValue<string>() == definition.EventSlug)!.DeepClone().AsObject();
 
     private static Dictionary<string, string> FixtureDictionary() => ReadFixtures()["events"]!.AsArray()
