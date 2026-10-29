@@ -33,7 +33,8 @@ public sealed class ConsoleApp(
         {
             presentation.Context(_settings, _snapshot, _predictionFileName);
             presentation.Menu(null,
-                ["Independent Monte Carlo Simulation", "Correlated Monte Carlo Simulation", "Conditional Monte Carlo", "Direct Probability Calculation", "Configure"], "Exit");
+                [$"Independent Monte Carlo Simulation ({_settings.Source})", $"Correlated Monte Carlo Simulation ({_settings.Source})",
+                    $"Conditional Monte Carlo ({_settings.Source})", $"Direct Probability Calculation ({_settings.Source})", "Configure"], "Exit");
             int? selection = ReadSelection(5);
             if (selection is null or 0) return;
             if (selection == 5)
@@ -49,6 +50,7 @@ public sealed class ConsoleApp(
             {
                 try
                 {
+                    output.WriteLine($"Using predictions file: {_predictionFileName} ({_settings.Source})");
                     if (selection is 1 or 2)
                     {
                         output.WriteLine("Running simulation...");
