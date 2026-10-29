@@ -15,8 +15,8 @@
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
 - Default source: Polymarket | Predictions file: `polymarket_predictions_20261029.json`
-- Kalshi snapshot: `kalshi_predictions_20261029.json` (same 35 races; retrieved 2026-10-29 13:12 UTC)
-- Election: 2026 | Races: 35 | Polymarket retrieved: 2026-10-29 13:12 UTC
+- Kalshi snapshot: `kalshi_predictions_20261029.json` (same 35 races; retrieved 2026-10-29 22:21 UTC)
+- Election: 2026 | Races: 35 | Polymarket retrieved: 2026-10-29 22:21 UTC
 
 ## Run and configure
 
