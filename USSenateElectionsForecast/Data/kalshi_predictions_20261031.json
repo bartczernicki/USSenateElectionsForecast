@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "electionYear": 2026,
-  "retrievedAt": "2026-10-31T16:32:40.73275+00:00",
+  "retrievedAt": "2026-10-31T21:23:13.777944+00:00",
   "races": [
     {
       "state": "Alabama",
@@ -15,7 +15,7 @@
           "label": "Barry Moore",
           "caucus": "Republican",
           "rawYesPrice": 0.978,
-          "probability": 0.9775112443778111,
+          "probability": 0.9721669980119284,
           "updatedAt": "2026-10-16T16:47:36.905478+00:00"
         },
         {
@@ -23,8 +23,8 @@
           "marketSlug": "SENATEAL-26-D",
           "label": "Everett Wess",
           "caucus": "Democratic",
-          "rawYesPrice": 0.0225,
-          "probability": 0.022488755622188907,
+          "rawYesPrice": 0.027999999999999997,
+          "probability": 0.02783300198807157,
           "updatedAt": "2026-09-15T21:45:34.940597+00:00"
         }
       ]
@@ -40,8 +40,8 @@
           "marketSlug": "SENATEAK-26-R",
           "label": "Republican party",
           "caucus": "Republican",
-          "rawYesPrice": 0.305,
-          "probability": 0.305,
+          "rawYesPrice": 0.315,
+          "probability": 0.3118811881188119,
           "updatedAt": "2026-10-16T17:41:27.227817+00:00"
         },
         {
@@ -50,7 +50,7 @@
           "label": "Democratic party",
           "caucus": "Democratic",
           "rawYesPrice": 0.695,
-          "probability": 0.695,
+          "probability": 0.6881188118811881,
           "updatedAt": "2026-10-16T17:41:27.227817+00:00"
         }
       ]
@@ -66,8 +66,8 @@
           "marketSlug": "SENATEAR-26-R",
           "label": "Tom Cotton",
           "caucus": "Republican",
-          "rawYesPrice": 0.947,
-          "probability": 0.9460539460539461,
+          "rawYesPrice": 0.9455,
+          "probability": 0.9426719840478563,
           "updatedAt": "2026-10-16T16:47:38.333391+00:00"
         },
         {
@@ -75,8 +75,8 @@
           "marketSlug": "SENATEAR-26-D",
           "label": "Hallie Shoffner",
           "caucus": "Democratic",
-          "rawYesPrice": 0.054,
-          "probability": 0.05394605394605395,
+          "rawYesPrice": 0.0575,
+          "probability": 0.05732801595214357,
           "updatedAt": "2026-09-15T21:45:39.479364+00:00"
         }
       ]
@@ -92,8 +92,8 @@
           "marketSlug": "SENATECO-26-R",
           "label": "Mark Baisley",
           "caucus": "Republican",
-          "rawYesPrice": 0.011,
-          "probability": 0.010978043912175647,
+          "rawYesPrice": 0.0115,
+          "probability": 0.011465603190428712,
           "updatedAt": "2026-10-16T16:53:55.491113+00:00"
         },
         {
@@ -101,8 +101,8 @@
           "marketSlug": "SENATECO-26-D",
           "label": "John Hickenlooper",
           "caucus": "Democratic",
-          "rawYesPrice": 0.991,
-          "probability": 0.9890219560878244,
+          "rawYesPrice": 0.9915,
+          "probability": 0.9885343968095712,
           "updatedAt": "2026-09-15T21:45:43.230836+00:00"
         }
       ]
@@ -119,7 +119,7 @@
           "label": "Michael Katz",
           "caucus": "Republican",
           "rawYesPrice": 0.019,
-          "probability": 0.01900950475237619,
+          "probability": 0.019,
           "updatedAt": "2026-10-19T18:10:48.405311+00:00"
         },
         {
@@ -127,8 +127,8 @@
           "marketSlug": "SENATEDE-26-D",
           "label": "Chris Coons",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9804999999999999,
-          "probability": 0.9809904952476238,
+          "rawYesPrice": 0.981,
+          "probability": 0.981,
           "updatedAt": "2026-10-19T18:04:50.041888+00:00"
         }
       ]
@@ -144,8 +144,8 @@
           "marketSlug": "SENATEFLS-26-R",
           "label": "Ashley Moody",
           "caucus": "Republican",
-          "rawYesPrice": 0.885,
-          "probability": 0.885,
+          "rawYesPrice": 0.89,
+          "probability": 0.8855721393034827,
           "updatedAt": "2026-10-19T16:49:36.923573+00:00"
         },
         {
@@ -154,7 +154,7 @@
           "label": "Angie Nixon",
           "caucus": "Democratic",
           "rawYesPrice": 0.11499999999999999,
-          "probability": 0.11499999999999999,
+          "probability": 0.11442786069651742,
           "updatedAt": "2026-10-19T16:49:36.923573+00:00"
         }
       ]
@@ -170,8 +170,8 @@
           "marketSlug": "SENATEGA-26-R",
           "label": "Mike Collins",
           "caucus": "Republican",
-          "rawYesPrice": 0.028999999999999998,
-          "probability": 0.028999999999999998,
+          "rawYesPrice": 0.0325,
+          "probability": 0.032435129740518966,
           "updatedAt": "2026-10-16T16:47:41.861165+00:00"
         },
         {
@@ -179,8 +179,8 @@
           "marketSlug": "SENATEGA-26-D",
           "label": "Jon Ossoff",
           "caucus": "Democratic",
-          "rawYesPrice": 0.971,
-          "probability": 0.971,
+          "rawYesPrice": 0.9695,
+          "probability": 0.967564870259481,
           "updatedAt": "2026-09-15T21:45:51.801908+00:00"
         }
       ]
@@ -196,8 +196,8 @@
           "marketSlug": "SENATEID-26-R",
           "label": "Jim Risch",
           "caucus": "Republican",
-          "rawYesPrice": 0.956,
-          "probability": 0.9451309935739003,
+          "rawYesPrice": 0.955,
+          "probability": 0.9450766947055913,
           "updatedAt": "2026-10-16T16:47:45.189286+00:00"
         },
         {
@@ -206,7 +206,7 @@
           "label": "David Roth",
           "caucus": "Democratic",
           "rawYesPrice": 0.0005,
-          "probability": 0.0004943153732081068,
+          "probability": 0.0004948045522018803,
           "updatedAt": "2026-10-10T16:42:06.416713+00:00"
         },
         {
@@ -215,7 +215,7 @@
           "label": "Todd Achilles",
           "caucus": "Unknown",
           "rawYesPrice": 0.055,
-          "probability": 0.054374691052891756,
+          "probability": 0.05442850074220683,
           "updatedAt": "2026-10-10T16:42:06.419895+00:00"
         }
       ]
@@ -231,8 +231,8 @@
           "marketSlug": "SENATEIL-26-R",
           "label": "Don Tracy",
           "caucus": "Republican",
-          "rawYesPrice": 0.0195,
-          "probability": 0.019383697813121274,
+          "rawYesPrice": 0.0175,
+          "probability": 0.017438963627304436,
           "updatedAt": "2026-10-16T16:47:46.850574+00:00"
         },
         {
@@ -240,8 +240,8 @@
           "marketSlug": "SENATEIL-26-D",
           "label": "Juliana Stratton",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9864999999999999,
-          "probability": 0.9806163021868787,
+          "rawYesPrice": 0.986,
+          "probability": 0.9825610363726955,
           "updatedAt": "2026-09-15T21:46:06.314534+00:00"
         }
       ]
@@ -258,7 +258,7 @@
           "label": "Ashley Hinson",
           "caucus": "Republican",
           "rawYesPrice": 0.555,
-          "probability": 0.555,
+          "probability": 0.5606060606060607,
           "updatedAt": "2026-10-16T16:47:43.545041+00:00"
         },
         {
@@ -266,8 +266,8 @@
           "marketSlug": "SENATEIA-26-D",
           "label": "Josh Turek",
           "caucus": "Democratic",
-          "rawYesPrice": 0.445,
-          "probability": 0.445,
+          "rawYesPrice": 0.435,
+          "probability": 0.4393939393939394,
           "updatedAt": "2026-09-15T21:45:56.492178+00:00"
         }
       ]
@@ -309,8 +309,8 @@
           "marketSlug": "SENATELA-26-R",
           "label": "Andy Barr",
           "caucus": "Republican",
-          "rawYesPrice": 0.966,
-          "probability": 0.966,
+          "rawYesPrice": 0.9664999999999999,
+          "probability": 0.9660169915042478,
           "updatedAt": "2026-10-16T16:47:50.032794+00:00"
         },
         {
@@ -319,7 +319,7 @@
           "label": "Charles Booker",
           "caucus": "Democratic",
           "rawYesPrice": 0.034,
-          "probability": 0.034,
+          "probability": 0.03398300849575213,
           "updatedAt": "2026-09-15T21:46:14.737871+00:00"
         }
       ]
@@ -335,8 +335,8 @@
           "marketSlug": "KXSENATELA-26NOV-D",
           "label": "Jamie Davis",
           "caucus": "Democratic",
-          "rawYesPrice": 0.11,
-          "probability": 0.10945273631840795,
+          "rawYesPrice": 0.10500000000000001,
+          "probability": 0.10500000000000001,
           "updatedAt": "2026-09-15T21:46:18.394448+00:00"
         },
         {
@@ -345,7 +345,7 @@
           "label": "Julia Letlow",
           "caucus": "Republican",
           "rawYesPrice": 0.895,
-          "probability": 0.890547263681592,
+          "probability": 0.895,
           "updatedAt": "2026-10-16T16:46:35.925723+00:00"
         }
       ]
@@ -361,8 +361,8 @@
           "marketSlug": "SENATEME-26-R",
           "label": "Susan Collins",
           "caucus": "Republican",
-          "rawYesPrice": 0.315,
-          "probability": 0.315,
+          "rawYesPrice": 0.325,
+          "probability": 0.325,
           "updatedAt": "2026-10-16T16:47:53.321359+00:00"
         },
         {
@@ -370,8 +370,8 @@
           "marketSlug": "SENATEME-26-D",
           "label": "Troy Jackson",
           "caucus": "Democratic",
-          "rawYesPrice": 0.685,
-          "probability": 0.685,
+          "rawYesPrice": 0.675,
+          "probability": 0.675,
           "updatedAt": "2026-09-15T21:46:25.480091+00:00"
         }
       ]
@@ -387,8 +387,8 @@
           "marketSlug": "SENATEMA-26-R",
           "label": "John Deaton",
           "caucus": "Republican",
-          "rawYesPrice": 0.015,
-          "probability": 0.015,
+          "rawYesPrice": 0.016,
+          "probability": 0.015960099750623444,
           "updatedAt": "2026-10-16T16:47:51.676057+00:00"
         },
         {
@@ -396,8 +396,8 @@
           "marketSlug": "SENATEMA-26-D",
           "label": "Ed Markey",
           "caucus": "Democratic",
-          "rawYesPrice": 0.985,
-          "probability": 0.985,
+          "rawYesPrice": 0.9864999999999999,
+          "probability": 0.9840399002493766,
           "updatedAt": "2026-09-15T21:46:21.980411+00:00"
         }
       ]
@@ -413,8 +413,8 @@
           "marketSlug": "SENATEMI-26-R",
           "label": "Mike Rogers",
           "caucus": "Republican",
-          "rawYesPrice": 0.22999999999999998,
-          "probability": 0.23115577889447234,
+          "rawYesPrice": 0.235,
+          "probability": 0.235,
           "updatedAt": "2026-10-16T16:47:54.999316+00:00"
         },
         {
@@ -423,7 +423,7 @@
           "label": "Abdul El-Sayed",
           "caucus": "Democratic",
           "rawYesPrice": 0.765,
-          "probability": 0.7688442211055276,
+          "probability": 0.765,
           "updatedAt": "2026-10-08T20:56:02.331252+00:00"
         }
       ]
@@ -440,7 +440,7 @@
           "label": "Michele Tafoya",
           "caucus": "Republican",
           "rawYesPrice": 0.0945,
-          "probability": 0.09431137724550898,
+          "probability": 0.0944055944055944,
           "updatedAt": "2026-10-16T16:47:56.657943+00:00"
         },
         {
@@ -448,8 +448,8 @@
           "marketSlug": "SENATEMN-26-D",
           "label": "Peggy Flanagan",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9075,
-          "probability": 0.905688622754491,
+          "rawYesPrice": 0.9065000000000001,
+          "probability": 0.9055944055944056,
           "updatedAt": "2026-09-15T21:46:33.899573+00:00"
         }
       ]
@@ -492,7 +492,7 @@
           "label": "Kurt Alme",
           "caucus": "Republican",
           "rawYesPrice": 0.885,
-          "probability": 0.8890005022601708,
+          "probability": 0.8801591248135255,
           "updatedAt": "2026-10-27T21:27:21.735033+00:00"
         },
         {
@@ -501,7 +501,7 @@
           "label": "Alani Bankhead",
           "caucus": "Democratic",
           "rawYesPrice": 0.0055,
-          "probability": 0.0055248618784530384,
+          "probability": 0.005469915464942814,
           "updatedAt": "2026-09-15T21:46:40.960925+00:00"
         },
         {
@@ -509,8 +509,8 @@
           "marketSlug": "SENATEMT-26-IND",
           "label": "Seth Bodnar",
           "caucus": "Unknown",
-          "rawYesPrice": 0.10500000000000001,
-          "probability": 0.1054746358613762,
+          "rawYesPrice": 0.11499999999999999,
+          "probability": 0.11437095972153156,
           "updatedAt": "2026-09-15T21:46:42.050956+00:00"
         }
       ]
@@ -527,7 +527,7 @@
           "label": "Pete Ricketts",
           "caucus": "Republican",
           "rawYesPrice": 0.755,
-          "probability": 0.7471548738248392,
+          "probability": 0.7460474308300395,
           "updatedAt": "2026-10-16T16:48:02.9699+00:00"
         },
         {
@@ -535,8 +535,8 @@
           "marketSlug": "SENATENE-26-D",
           "label": "Cindy Burbank",
           "caucus": "Democratic",
-          "rawYesPrice": 0.0005,
-          "probability": 0.0004948045522018803,
+          "rawYesPrice": 0.002,
+          "probability": 0.001976284584980237,
           "updatedAt": "2026-09-15T21:46:49.801521+00:00"
         },
         {
@@ -545,7 +545,7 @@
           "label": "Dan Osborn",
           "caucus": "Unknown",
           "rawYesPrice": 0.255,
-          "probability": 0.25235032162295895,
+          "probability": 0.2519762845849802,
           "updatedAt": "2026-09-15T21:46:51.034681+00:00"
         }
       ]
@@ -561,8 +561,8 @@
           "marketSlug": "SENATENH-26-R",
           "label": "John E. Sununu",
           "caucus": "Republican",
-          "rawYesPrice": 0.075,
-          "probability": 0.07511266900350526,
+          "rawYesPrice": 0.076,
+          "probability": 0.07588617074388417,
           "updatedAt": "2026-10-16T16:48:04.459905+00:00"
         },
         {
@@ -570,8 +570,8 @@
           "marketSlug": "SENATENH-26-D",
           "label": "Chris Pappas",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9235,
-          "probability": 0.9248873309964948,
+          "rawYesPrice": 0.9255,
+          "probability": 0.9241138292561157,
           "updatedAt": "2026-09-15T21:46:54.814624+00:00"
         }
       ]
@@ -587,8 +587,8 @@
           "marketSlug": "SENATENJ-26-R",
           "label": "Justin Murphy",
           "caucus": "Republican",
-          "rawYesPrice": 0.024,
-          "probability": 0.02397602397602398,
+          "rawYesPrice": 0.0215,
+          "probability": 0.021510755377688845,
           "updatedAt": "2026-10-16T16:48:06.1129+00:00"
         },
         {
@@ -596,8 +596,8 @@
           "marketSlug": "SENATENJ-26-D",
           "label": "Cory Booker",
           "caucus": "Democratic",
-          "rawYesPrice": 0.977,
-          "probability": 0.9760239760239761,
+          "rawYesPrice": 0.978,
+          "probability": 0.9784892446223112,
           "updatedAt": "2026-09-15T21:46:57.892182+00:00"
         }
       ]
@@ -613,8 +613,8 @@
           "marketSlug": "SENATENM-26-R",
           "label": "Larry E. Marker",
           "caucus": "Republican",
-          "rawYesPrice": 0.013500000000000002,
-          "probability": 0.013500000000000003,
+          "rawYesPrice": 0.014,
+          "probability": 0.013993003498250875,
           "updatedAt": "2026-10-16T16:48:07.653851+00:00"
         },
         {
@@ -623,7 +623,7 @@
           "label": "Ben Ray Luj\u00E1n",
           "caucus": "Democratic",
           "rawYesPrice": 0.9864999999999999,
-          "probability": 0.9865,
+          "probability": 0.9860069965017492,
           "updatedAt": "2026-09-15T21:47:01.391467+00:00"
         }
       ]
@@ -640,7 +640,7 @@
           "label": "Michael Whatley",
           "caucus": "Republican",
           "rawYesPrice": 0.0335,
-          "probability": 0.03343313373253493,
+          "probability": 0.03339980059820538,
           "updatedAt": "2026-10-16T16:48:01.384799+00:00"
         },
         {
@@ -648,8 +648,8 @@
           "marketSlug": "SENATENC-26-D",
           "label": "Roy Cooper",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9684999999999999,
-          "probability": 0.966566866267465,
+          "rawYesPrice": 0.9695,
+          "probability": 0.9666001994017945,
           "updatedAt": "2026-09-15T21:46:45.888134+00:00"
         }
       ]
@@ -691,8 +691,8 @@
           "marketSlug": "SENATEOK-26-R",
           "label": "Kevin Hern",
           "caucus": "Republican",
-          "rawYesPrice": 0.973,
-          "probability": 0.9744616925388082,
+          "rawYesPrice": 0.9735,
+          "probability": 0.9754509018036073,
           "updatedAt": "2026-10-16T16:48:10.938595+00:00"
         },
         {
@@ -700,8 +700,8 @@
           "marketSlug": "SENATEOK-26-D",
           "label": "N\u2019Kiyla Thomas",
           "caucus": "Democratic",
-          "rawYesPrice": 0.025500000000000002,
-          "probability": 0.02553830746119179,
+          "rawYesPrice": 0.0245,
+          "probability": 0.024549098196392786,
           "updatedAt": "2026-10-27T21:09:04.879402+00:00"
         }
       ]
@@ -717,8 +717,8 @@
           "marketSlug": "SENATEOR-26-R",
           "label": "David Brock Smith",
           "caucus": "Republican",
-          "rawYesPrice": 0.014,
-          "probability": 0.014035087719298246,
+          "rawYesPrice": 0.013,
+          "probability": 0.012980529206190715,
           "updatedAt": "2026-10-16T16:48:12.518307+00:00"
         },
         {
@@ -726,8 +726,8 @@
           "marketSlug": "SENATEOR-26-D",
           "label": "Jeff Merkley",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9835,
-          "probability": 0.9859649122807017,
+          "rawYesPrice": 0.9884999999999999,
+          "probability": 0.9870194707938094,
           "updatedAt": "2026-09-15T21:47:13.422177+00:00"
         }
       ]
@@ -743,8 +743,8 @@
           "marketSlug": "SENATERI-26-R",
           "label": "Raymond McKay",
           "caucus": "Republican",
-          "rawYesPrice": 0.013000000000000001,
-          "probability": 0.012980529206190717,
+          "rawYesPrice": 0.0125,
+          "probability": 0.012481278082875686,
           "updatedAt": "2026-10-27T21:27:23.350826+00:00"
         },
         {
@@ -752,8 +752,8 @@
           "marketSlug": "SENATERI-26-D",
           "label": "Jack Reed",
           "caucus": "Democratic",
-          "rawYesPrice": 0.9884999999999999,
-          "probability": 0.9870194707938094,
+          "rawYesPrice": 0.989,
+          "probability": 0.9875187219171242,
           "updatedAt": "2026-10-27T21:23:01.269597+00:00"
         }
       ]
@@ -796,7 +796,7 @@
           "label": "Mike Rounds",
           "caucus": "Republican",
           "rawYesPrice": 0.9444999999999999,
-          "probability": 0.9360753221010902,
+          "probability": 0.9407370517928287,
           "updatedAt": "2026-10-16T16:53:57.236262+00:00"
         },
         {
@@ -805,7 +805,7 @@
           "label": "Julian Beaudion",
           "caucus": "Democratic",
           "rawYesPrice": 0.0045000000000000005,
-          "probability": 0.00445986124876115,
+          "probability": 0.004482071713147412,
           "updatedAt": "2026-10-10T16:42:08.394432+00:00"
         },
         {
@@ -813,8 +813,8 @@
           "marketSlug": "SENATESD-26-BBEN",
           "label": "Brian Bengs",
           "caucus": "Unknown",
-          "rawYesPrice": 0.060000000000000005,
-          "probability": 0.059464816650148675,
+          "rawYesPrice": 0.055,
+          "probability": 0.05478087649402392,
           "updatedAt": "2026-10-10T16:42:08.400199+00:00"
         }
       ]
@@ -830,8 +830,8 @@
           "marketSlug": "SENATETN-26-R",
           "label": "Bill Hagerty",
           "caucus": "Republican",
-          "rawYesPrice": 0.9704999999999999,
-          "probability": 0.9695304695304695,
+          "rawYesPrice": 0.972,
+          "probability": 0.9754139488208731,
           "updatedAt": "2026-10-16T16:48:17.845482+00:00"
         },
         {
@@ -839,8 +839,8 @@
           "marketSlug": "SENATETN-26-D",
           "label": "Marquita Bradshaw",
           "caucus": "Democratic",
-          "rawYesPrice": 0.0305,
-          "probability": 0.03046953046953047,
+          "rawYesPrice": 0.0245,
+          "probability": 0.024586051179126947,
           "updatedAt": "2026-10-08T20:56:02.692618+00:00"
         }
       ]
@@ -909,7 +909,7 @@
           "label": "Shelley Moore Capito",
           "caucus": "Republican",
           "rawYesPrice": 0.9795,
-          "probability": 0.9814629258517035,
+          "probability": 0.9785214785214784,
           "updatedAt": "2026-10-16T16:48:21.134867+00:00"
         },
         {
@@ -917,8 +917,8 @@
           "marketSlug": "SENATEWV-26-D",
           "label": "Rachel Fetty Anderson",
           "caucus": "Democratic",
-          "rawYesPrice": 0.0185,
-          "probability": 0.01853707414829659,
+          "rawYesPrice": 0.0215,
+          "probability": 0.021478521478521473,
           "updatedAt": "2026-09-15T23:05:30.043281+00:00"
         }
       ]
@@ -934,8 +934,8 @@
           "marketSlug": "SENATEWY-26-R",
           "label": "Harriet Hageman",
           "caucus": "Republican",
-          "rawYesPrice": 0.988,
-          "probability": 0.9845540607872446,
+          "rawYesPrice": 0.9884999999999999,
+          "probability": 0.9845617529880477,
           "updatedAt": "2026-10-16T16:48:22.991051+00:00"
         },
         {
@@ -944,7 +944,7 @@
           "label": "James Byrd",
           "caucus": "Democratic",
           "rawYesPrice": 0.0155,
-          "probability": 0.015445939212755356,
+          "probability": 0.015438247011952191,
           "updatedAt": "2026-09-15T21:47:47.192453+00:00"
         }
       ]
