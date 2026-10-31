@@ -14,9 +14,9 @@
 - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
-- Default source: Polymarket | Predictions file: `polymarket_predictions_20261030.json`
-- Kalshi snapshot: `kalshi_predictions_20261030.json` (same 35 races; retrieved 2026-10-30 20:51 EDT / 2026-10-31 00:51 UTC)
-- Election: 2026 | Races: 35 | Polymarket retrieved: 2026-10-30 20:51 EDT / 2026-10-31 00:51 UTC
+- Default source: Polymarket | Predictions file: `polymarket_predictions_20261031.json`
+- Kalshi snapshot: `kalshi_predictions_20261031.json` (same 35 races; retrieved 2026-10-31 12:32 EDT / 2026-10-31 16:32 UTC)
+- Election: 2026 | Races: 35 | Polymarket retrieved: 2026-10-31 12:32 EDT / 2026-10-31 16:32 UTC
 
 ## Run and configure
 
@@ -55,7 +55,7 @@ The correlated results in options 2, 3, and 4 use the same model. More samples r
 
 ## Prediction data and refreshes
 
-- Bundled Polymarket snapshots for October 24–30, 2026 and Kalshi snapshots for October 28–30 work offline. The active source, filename, and retrieval time appear in the menus.
+- Bundled Polymarket snapshots for October 24–31, 2026 and Kalshi snapshots for October 28–31 work offline. The active source, filename, and retrieval time appear in the menus.
 - The refreshed October 30 snapshots use the New York calendar date; their retrieval timestamps are after midnight UTC on October 31.
 - [Polymarket's public Gamma API](https://docs.polymarket.com/market-data/discover-markets) supplies market-implied prices. Each race's mutually exclusive Yes prices are divided by their total to produce probabilities that sum to one.
 - [Kalshi's public REST API](https://docs.kalshi.com/getting_started/quick_start_market_data) supplies the midpoint of each contract's Yes bid and ask. These midpoints are divided by their race total in the same way. Missing or unusable quotes fail the refresh; there is no fallback to last trades or the other provider.
