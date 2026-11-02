@@ -14,9 +14,9 @@
 - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
-- Default source: Polymarket | Predictions file: `polymarket_predictions_20261101.json`
-- Kalshi snapshot: `kalshi_predictions_20261101.json` (same 35 races; refreshed 2026-11-01 21:18 EST / 2026-11-02 02:18 UTC)
-- Election: 2026 | Races: 35 | Polymarket refreshed: 2026-11-01 21:18 EST / 2026-11-02 02:18 UTC
+- Default source: Polymarket | Predictions file: `polymarket_predictions_20261102.json`
+- Kalshi snapshot: `kalshi_predictions_20261102.json` (same 35 races; refreshed 2026-11-02 08:17 EST / 2026-11-02 13:17 UTC)
+- Election: 2026 | Races: 35 | Polymarket refreshed: 2026-11-02 08:17 EST / 2026-11-02 13:17 UTC
 
 ## Run and configure
 
@@ -46,7 +46,9 @@ Under **Configure**:
 
 The correlated results in options 2, 3, and 4 use the same model. More samples reduce calculation noise; election uncertainty remains.
 
-## Interpreting results
+## Simulation Results
+
+## Interpreting Results
 
 - Results show control probabilities, seat distributions, and the probability of reaching Democratic seat thresholds.
 - Angus King and Bernie Sanders count with Democrats. Democratic and Republican winners are assumed to join their respective caucuses.
@@ -55,7 +57,7 @@ The correlated results in options 2, 3, and 4 use the same model. More samples r
 
 ## Prediction data and refreshes
 
-- Bundled Polymarket snapshots for October 24–November 1, 2026 and Kalshi snapshots for October 28–November 1 work offline. The active source, filename, and retrieval time appear in the menus.
+- Bundled Polymarket snapshots for October 24–November 2, 2026 and Kalshi snapshots for October 28–November 2 work offline. The active source, filename, and retrieval time appear in the menus.
 - The refreshed October 30 snapshots use the New York calendar date; their retrieval timestamps are after midnight UTC on October 31.
 - The refreshed November 1 snapshots also use the New York calendar date; their retrieval timestamps are after midnight UTC on November 2.
 - [Polymarket's public Gamma API](https://docs.polymarket.com/market-data/discover-markets) supplies market-implied prices. Each race's mutually exclusive Yes prices are divided by their total to produce probabilities that sum to one.
