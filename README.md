@@ -16,9 +16,9 @@
 - Rho links underlying race scores: 0 = independent; higher = more shared national swing.
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
-- Default source: Polymarket | Predictions file: `polymarket_predictions_20261102.json`
-- Kalshi snapshot: `kalshi_predictions_20261102.json` (same 35 races; refreshed 2026-11-02 20:06 EST / 2026-11-03 01:06 UTC)
-- Election: 2026 | Races: 35 | Polymarket refreshed: 2026-11-02 20:06 EST / 2026-11-03 01:06 UTC
+- Default source: Polymarket | Predictions file: `polymarket_predictions_20261103.json`
+- Kalshi snapshot: `kalshi_predictions_20261103.json` (same 35 races; refreshed 2026-11-03 07:50 EST / 2026-11-03 12:50 UTC)
+- Election: 2026 | Races: 35 | Polymarket refreshed: 2026-11-03 07:50 EST / 2026-11-03 12:50 UTC
 
 ## Run and configure
 
@@ -50,12 +50,12 @@ The correlated results in options 2, 3, and 4 use the same model. More samples r
 
 ## Simulation Results
 
-These results use the saved November 2 Polymarket snapshot, retrieved at 2026-11-02 20:06 EST / 2026-11-03 01:06 UTC. Each model runs 100,000 trials with its own random generator seeded with `2026`.
+These results use the saved November 3 Polymarket snapshot, retrieved at 2026-11-03 07:50 EST / 2026-11-03 12:50 UTC. Each model runs 100,000 trials with its own random generator seeded with `2026`.
 
 ### Independent Monte Carlo
 
-- **Average seats:** 52.42 Democratic, 47.12 Republican.
-- **Control probability:** 89.44% Democratic, 7.28% Republican.
+- **Average seats:** 52.46 Democratic, 47.04 Republican.
+- **Control probability:** 90.04% Democratic, 6.63% Republican.
 - **90% outcome range:** 50–55 Democratic seats, 44–50 Republican seats.
 
 ![Independent Monte Carlo Democratic and Republican seat distributions](USSenateElectionsForecast/Images/Simulation-Independent-Distributions.png)
@@ -65,10 +65,10 @@ These results use the saved November 2 Polymarket snapshot, retrieved at 2026-11
 ### Correlated Monte Carlo
 
 - **Correlation:** rho = 0.12.
-- **Average seats:** 52.42 Democratic, 47.12 Republican.
-- **Control probability:** 81.86% Democratic, 15.60% Republican.
+- **Average seats:** 52.46 Democratic, 47.04 Republican.
+- **Control probability:** 82.62% Democratic, 14.71% Republican.
 - **90% outcome range:** 49–56 Democratic seats, 43–51 Republican seats.
-- **Chance of 55+ Democratic seats:** 16.18%, compared with 8.30% in the independent simulation.
+- **Chance of 55+ Democratic seats:** 16.44%, compared with 8.62% in the independent simulation.
 - **Effect of correlation:** wider outcome ranges with unchanged race probabilities and expected seats; small differences in simulated averages are sampling noise.
 
 ![Correlated Monte Carlo Democratic and Republican seat distributions](USSenateElectionsForecast/Images/Simulation-Correlated-Distribution.png)
