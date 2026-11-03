@@ -50,26 +50,33 @@ The correlated results in options 2, 3, and 4 use the same model. More samples r
 
 ## Simulation Results
 
-## Interpreting Results
+These results use the saved November 2 Polymarket snapshot, retrieved at 2026-11-02 20:06 EST / 2026-11-03 01:06 UTC. Each model runs 100,000 trials with its own random generator seeded with `2026`.
 
-- Results show control probabilities, seat distributions, and the probability of reaching Democratic seat thresholds.
-- Angus King and Bernie Sanders count with Democrats. Democratic and Republican winners are assumed to join their respective caucuses.
-- Candidates without a known caucus remain **unknown / unaffiliated**. Control is **uncertain** when neither caucus reaches its threshold, because unaffiliated senators could determine the majority.
-- Seat ranges span the **5th-95th percentiles** of possible final seats, describing election outcomes rather than confidence intervals for an estimated average.
+### Independent Monte Carlo
+
+- **Average seats:** 52.42 Democratic, 47.12 Republican.
+- **Control probability:** 89.44% Democratic, 7.28% Republican.
+- **90% outcome range:** 50–55 Democratic seats, 44–50 Republican seats.
+
+![Independent Monte Carlo Democratic and Republican seat distributions](USSenateElectionsForecast/Images/Simulation-Independent-Distributions.png)
+
+![Independent Monte Carlo Democratic seat thresholds and Senate control probabilities](USSenateElectionsForecast/Images/Simulation-Independent-Probabilities.png)
+
+### Correlated Monte Carlo
+
+- **Correlation:** rho = 0.12.
+- **Average seats:** 52.42 Democratic, 47.12 Republican.
+- **Control probability:** 81.86% Democratic, 15.60% Republican.
+- **90% outcome range:** 49–56 Democratic seats, 43–51 Republican seats.
+- **Chance of 55+ Democratic seats:** 16.18%, compared with 8.30% in the independent simulation.
+- **Effect of correlation:** wider outcome ranges with unchanged race probabilities and expected seats; small differences in simulated averages are sampling noise.
+
+![Correlated Monte Carlo Democratic and Republican seat distributions](USSenateElectionsForecast/Images/Simulation-Correlated-Distribution.png)
+
+![Correlated Monte Carlo Democratic seat thresholds and Senate control probabilities](USSenateElectionsForecast/Images/Simulation-Correlated-Probabilities.png)
+
 
 ## Prediction data and refreshes
 
-- Bundled Polymarket snapshots for October 24–November 2, 2026 and Kalshi snapshots for October 28–November 2 work offline. The active source, filename, and retrieval time appear in the menus.
-- The refreshed October 30 snapshots use the New York calendar date; their retrieval timestamps are after midnight UTC on October 31.
-- The refreshed November 1 snapshots also use the New York calendar date; their retrieval timestamps are after midnight UTC on November 2.
-- The refreshed November 2 snapshots use the New York calendar date; their retrieval timestamps are after midnight UTC on November 3.
 - [Polymarket's public Gamma API](https://docs.polymarket.com/market-data/discover-markets) supplies market-implied prices. Each race's mutually exclusive Yes prices are divided by their total to produce probabilities that sum to one.
 - [Kalshi's public REST API](https://docs.kalshi.com/getting_started/quick_start_market_data) supplies the midpoint of each contract's Yes bid and ask. These midpoints are divided by their race total in the same way. Missing or unusable quotes fail the refresh; there is no fallback to last trades or the other provider.
-
-## Build and verify
-
-```powershell
-dotnet build USSenateElectionsForecast.sln -c Release
-dotnet test USSenateElectionsForecast.sln -c Release
-dotnet publish USSenateElectionsForecast/USSenateElectionsForecast.csproj -c Release -o artifacts/publish
-```
