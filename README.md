@@ -1,5 +1,7 @@
 # US Senate Elections Forecast
 
+![Forecasting the US Senate cover image](USSenateElectionsForecast/Images/ForecastingTheUSSenateCoverImage.png)
+
 ## What is this & Why might it be interesting?
 
 - A .NET 10 console application that forecasts the 2026 U.S. Senate elections using [Polymarket](https://polymarket.com/) or [Kalshi](https://kalshi.com/) probabilities, Monte Carlo simulations, and direct probability calculations.
@@ -15,8 +17,8 @@
 - Shared polling errors motivate correlation ([Nate Silver's FLIPR methodology](https://www.natesilver.net/p/flipr-midterms-model-methodology)).
 - Default 0.12: 12% national / 88% local score variance; this app's assumption, not Silver's.
 - Default source: Polymarket | Predictions file: `polymarket_predictions_20261102.json`
-- Kalshi snapshot: `kalshi_predictions_20261102.json` (same 35 races; refreshed 2026-11-02 08:17 EST / 2026-11-02 13:17 UTC)
-- Election: 2026 | Races: 35 | Polymarket refreshed: 2026-11-02 08:17 EST / 2026-11-02 13:17 UTC
+- Kalshi snapshot: `kalshi_predictions_20261102.json` (same 35 races; refreshed 2026-11-02 20:06 EST / 2026-11-03 01:06 UTC)
+- Election: 2026 | Races: 35 | Polymarket refreshed: 2026-11-02 20:06 EST / 2026-11-03 01:06 UTC
 
 ## Run and configure
 
@@ -60,6 +62,7 @@ The correlated results in options 2, 3, and 4 use the same model. More samples r
 - Bundled Polymarket snapshots for October 24–November 2, 2026 and Kalshi snapshots for October 28–November 2 work offline. The active source, filename, and retrieval time appear in the menus.
 - The refreshed October 30 snapshots use the New York calendar date; their retrieval timestamps are after midnight UTC on October 31.
 - The refreshed November 1 snapshots also use the New York calendar date; their retrieval timestamps are after midnight UTC on November 2.
+- The refreshed November 2 snapshots use the New York calendar date; their retrieval timestamps are after midnight UTC on November 3.
 - [Polymarket's public Gamma API](https://docs.polymarket.com/market-data/discover-markets) supplies market-implied prices. Each race's mutually exclusive Yes prices are divided by their total to produce probabilities that sum to one.
 - [Kalshi's public REST API](https://docs.kalshi.com/getting_started/quick_start_market_data) supplies the midpoint of each contract's Yes bid and ask. These midpoints are divided by their race total in the same way. Missing or unusable quotes fail the refresh; there is no fallback to last trades or the other provider.
 
