@@ -2,6 +2,19 @@
 
 ![Forecasting the US Senate cover image](USSenateElectionsForecast/Images/ForecastingTheUSSenateCoverImage.png)
 
+**Update 11.04.2026**
+
+I backed my forecasts with actual positions on Kalshi! Here are the closed Senate and House bets, where my Senate model showed roughly a 14% edge on Democrats.
+
+<p align="center">
+  <a href="https://github.com/bartczernicki/USSenateElectionsForecast/blob/main/USSenateElectionsForecast/Images/KalshiResults/KalshiSenatePosition.png">
+    <img src="https://raw.githubusercontent.com/bartczernicki/USSenateElectionsForecast/main/USSenateElectionsForecast/Images/KalshiResults/KalshiSenatePosition.png" alt="Kalshi Senate position" width="49%">
+  </a>
+  <a href="https://github.com/bartczernicki/USSenateElectionsForecast/blob/main/USSenateElectionsForecast/Images/KalshiResults/KalshiHousePosition.png">
+    <img src="https://raw.githubusercontent.com/bartczernicki/USSenateElectionsForecast/main/USSenateElectionsForecast/Images/KalshiResults/KalshiHousePosition.png" alt="Kalshi House position" width="49%">
+  </a>
+</p>
+
 ## What is this & Why might it be interesting?
 
 - A .NET 10 console application that forecasts the 2026 U.S. Senate elections using [Polymarket](https://polymarket.com/) or [Kalshi](https://kalshi.com/) probabilities, Monte Carlo simulations, and direct probability calculations.
