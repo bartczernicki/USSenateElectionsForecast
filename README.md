@@ -4,7 +4,7 @@
 
 **Update 11.04.2026**
 
-I backed my forecasts with actual positions on Kalshi! Here are the closed Senate and House bets, where my 11.01.2026 Senate model showed roughly a 14% edge for Democrats.
+I backed my forecasts with actual positions on Kalshi! Here are the closed Senate and House bets, where my 11.01.2026 Senate model showed up to a 15% edge for Democrats.
 
 <p align="center">
   <a href="https://github.com/bartczernicki/USSenateElectionsForecast/blob/main/USSenateElectionsForecast/Images/KalshiResults/KalshiSenatePosition.png">
